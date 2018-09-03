@@ -16,19 +16,19 @@ class Automaton {
         this.height = height;
         this.size = this.width * this.height;
         this._generation = 0;
-        console.log("CELLS", cells);
 
         if (!_.isArray(cells) || cells.length === 0) {
-            console.log("CLEAR");
+            // console.log("CLEAR");
             this._clear();
         } else {
             if (cells.length !== this.size) {
-                console.error("Trying to restore invalid grid", cells);
+                // console.error("Trying to restore invalid grid", cells);
                 this._clear();
                 return;
             }
             this._restore(cells);
         }
+        console.log("CELLS", this.cells, cells);
     }
 
     setCell(x, y, value) {

@@ -33,7 +33,7 @@ class SimulationScreen extends React.Component {
 
         this.controls = React.createRef();
 
-        _.bindAll(this, "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize");
+        _.bindAll(this, "onSave", "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize");
         this.automaton = undefined;
     }
 
@@ -116,6 +116,10 @@ class SimulationScreen extends React.Component {
             .automaton
             .clear();
 
+        this.notifyChange();
+    }
+
+    onSave() {
         this.notifyChange();
     }
 
@@ -297,6 +301,7 @@ class SimulationScreen extends React.Component {
                     onStop={this.onStop}
                     onStep={this.onStep}
                     onRewind={this.onRewind}
+                    onSave={this.onSave}
                     onRandomize={this.onRandomize}
                     onClear={this.onClear}
                     />

@@ -8,6 +8,7 @@ import RewindIcon from '@material-ui/icons/FastRewind';
 import PlayIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
 import StepIcon from '@material-ui/icons/SkipNext';
+import SaveIcon from '@material-ui/icons/Save';
 import red from '@material-ui/core/colors/red';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -30,10 +31,11 @@ class SimulationControls extends React.Component {
             step: true,
             stop: false,
             run: true,
+            save:true,
             rewind: true
         };
 
-        _.bindAll(this, "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize");
+        _.bindAll(this, "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize", "onSave");
     }
 
     stop() {
@@ -47,24 +49,30 @@ class SimulationControls extends React.Component {
     }
 
     onRun() {
-        this.setState({step: false, stop: true, run: false, rewind: false});
+        this.setState({save:false, step: false, stop: true, run: false, rewind: false});
         this
             .props
             .onRun();
     }
 
     onStop() {
-        this.setState({step: true, stop: false, run: true, rewind: true});
+        this.setState({step: true, save:true, stop: false, run: true, rewind: true});
         this
             .props
             .onStop();
     }
 
-    onClear() {
-        this.onStop();
+    onRewind() {
+        this.setState({step: true, save:true, stop: false, run: true, rewind: true});
         this
             .props
-            .onClear();
+            .onRewind();
+    }
+
+    onSave() {
+        this
+            .props
+            .onSave();
     }
 
     onRandomize() {
@@ -74,12 +82,13 @@ class SimulationControls extends React.Component {
             .onRandomize();
     }
 
-    onRewind() {
-        this.setState({step: true, stop: false, run: true, rewind: true});
+    onClear() {
+        this.onStop();
         this
             .props
-            .onRewind();
+            .onClear();
     }
+
 
     render() {
         return (
@@ -114,6 +123,18 @@ class SimulationControls extends React.Component {
                             onClick={this.onRewind}
                             disabled={!this.state.rewind}>
                             <RewindIcon/>
+                        </Button>
+
+                    </div>
+                </Tooltip>
+                <Tooltip title="Save grid">
+                    <div>
+                        <Button
+                            variant="outlined"
+                            style={styles.toolButton}
+                            onClick={this.onSave}
+                            disabled={!this.state.save}>
+                            <SaveIcon color="primary"/>
                         </Button>
 
                     </div>

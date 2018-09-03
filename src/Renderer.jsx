@@ -15,7 +15,7 @@ class Renderer {
         this.cellSizeFull = settings.cellSize + settings.cellMargin;
 
         this.ctx.canvas.width = this.cellSizeFull * settings.gridWidth - settings.cellMargin;
-        this.ctx.canvas.height = this.cellSizeFull * settings.gridWidth - settings.cellMargin;
+        this.ctx.canvas.height = this.cellSizeFull * settings.gridHeight - settings.cellMargin;
         this.colors = settings.palette;
     }
 
