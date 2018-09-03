@@ -26,7 +26,7 @@ const GLInfo = () => {
 const ATTRS = {
     "bb": {
         info: EmptyInfo,
-        rules: []
+        rules: [],
     },
     "gl": {
         info: GLInfo,

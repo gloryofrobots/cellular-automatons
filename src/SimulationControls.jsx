@@ -9,7 +9,7 @@ import PlayIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
 import StepIcon from '@material-ui/icons/SkipNext';
 import SaveIcon from '@material-ui/icons/Save';
-import red from '@material-ui/core/colors/red';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 import IconButton from '@material-ui/core/IconButton';
 
@@ -31,11 +31,11 @@ class SimulationControls extends React.Component {
             step: true,
             stop: false,
             run: true,
-            save:true,
+            save: true,
             rewind: true
         };
 
-        _.bindAll(this, "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize", "onSave");
+        _.bindAll(this, "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize", "onSave", "onRefresh");
     }
 
     stop() {
@@ -43,28 +43,28 @@ class SimulationControls extends React.Component {
     }
 
     onStep() {
-        this.setState({save:false});
+        // this.setState({save:false});
         this
             .props
             .onStep();
     }
 
     onRun() {
-        this.setState({save:false, step: false, stop: true, run: false, rewind: false});
+        this.setState({save: false, step: false, stop: true, run: false, rewind: false});
         this
             .props
             .onRun();
     }
 
     onStop() {
-        this.setState({step: true, save:true, stop: false, run: true, rewind: true});
+        this.setState({step: true, save: true, stop: false, run: true, rewind: true});
         this
             .props
             .onStop();
     }
 
     onRewind() {
-        this.setState({step: true, save:true, stop: false, run: true, rewind: true});
+        this.setState({step: true, save: true, stop: false, run: true, rewind: true});
         this
             .props
             .onRewind();
@@ -74,6 +74,12 @@ class SimulationControls extends React.Component {
         this
             .props
             .onSave();
+    }
+
+    onRefresh() {
+        this
+            .props
+            .onRefresh();
     }
 
     onRandomize() {
@@ -89,7 +95,6 @@ class SimulationControls extends React.Component {
             .props
             .onClear();
     }
-
 
     render() {
         return (
@@ -134,22 +139,34 @@ class SimulationControls extends React.Component {
                             style={styles.toolButton}
                             onClick={this.onSave}
                             disabled={!this.state.save}>
-                            <SaveIcon />
+                            <SaveIcon/>
+                        </Button>
+
+                    </div>
+                </Tooltip>
+                <Tooltip title="Load last saved grid">
+                    <div>
+                        <Button variant="outlined" onClick={this.onRefresh} disabled={!this.state.save}>
+                            <RefreshIcon/>
                         </Button>
 
                     </div>
                 </Tooltip>
                 <Tooltip title="Randomize">
                     <div>
-                        <Button variant="outlined" style={styles.toolButton} onClick={this.onRandomize}>
-                            <ShuffleIcon color="error"/>
+                        <Button
+                            variant="outlined"
+                            disabled={!this.state.save}
+                            style={styles.toolButton}
+                            onClick={this.onRandomize}>
+                            <ShuffleIcon/>
                         </Button>
                     </div>
                 </Tooltip>
                 <Tooltip title="Clear">
                     <div>
-                        <Button variant="outlined" style={styles.toolButton} onClick={this.onClear}>
-                            <ClearIcon color="error"/>
+                        <Button variant="outlined" onClick={this.onClear} disabled={!this.state.save}>
+                            <ClearIcon/>
                         </Button>
                     </div>
                 </Tooltip>

@@ -105,6 +105,9 @@ class SettingsScreen extends React.Component {
             .props
             .settings
             .setString("family", event.target.value);
+        //clearing grid to avoid confusion between families
+        this.props.settings.set("grid", []);
+        this.props.settings.set("currentValue", 0);
     }
 
     handleChangeRule(event) {

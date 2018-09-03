@@ -24,7 +24,7 @@ var DEFAULT = {
         '#333333', '#808080', '#cccccc', '#D33115',
         '#E27300', '#FCC400', '#B0BC00', '#68BC00',
     ],
-    cells: []
+    grid: []
 };
 
 // default cellular automaton attributes
@@ -36,7 +36,18 @@ class Settings {
         this._onUpdate = onUpdate;
         this.onUpdate = this.onUpdate.bind(this);
         this.updated = new Set();
+        this.maxValue = 0;
         this.load();
+    }
+
+    onAutomatonChanged(automaton) {
+        this.maxValue = automaton.getMaxValue();
+        // this.updated.clear();
+        this._onUpdate();
+    } 
+
+    getMaxValue() {
+        return this.maxValue;
     }
 
     onUpdate() {
@@ -253,9 +264,11 @@ class Settings {
         );
     }
 
-    saveAutomaton(automaton, force){
-        var data = JSON.stringify(automaton.cells);
-        localStorage.setItem("cells", data);
+    saveAutomatonGrid(automaton){
+        this.settings["grid"] = automaton.grid;
+        //saving directly only one value to speed things up
+        var data = JSON.stringify(this.settings.grid);
+        localStorage.setItem("grid", data);
     }
 
     save() {

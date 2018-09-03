@@ -14,5 +14,13 @@ class InvalidParamsError {
 }
 InvalidParamsError.prototype = Object.create(Error.prototype);
 
+class InvalidGridError {
+  constructor(message) {
+    this.message = message;
+    this.stack = new Error().stack; // Optional
+  }
+}
+InvalidGridError.prototype = Object.create(Error.prototype);
 
-export {InvalidParamsError, AutomatonError}
+
+export {InvalidParamsError, AutomatonError, InvalidGridError}

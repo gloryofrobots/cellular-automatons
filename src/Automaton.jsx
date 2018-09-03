@@ -31,6 +31,20 @@ class Automaton {
         console.log("CELLS", this.cells, cells);
     }
 
+    setCells(cells) {
+        if (cells.length !== this.size) {
+            // console.error("Trying to restore invalid grid", cells);
+            throw new Errors.InvalidGridError();
+        }
+
+        this._restore(cells);
+        this.render();
+    }
+
+    get grid() {
+        return this.initialCells;
+    }
+
     setCell(x, y, value) {
         var index = this.index(x, y);
         if (index < 0) {
@@ -306,7 +320,7 @@ class BriansBrain extends GameOfLife {
     }
 
     getMaxValue() {
-        return 3;
+        return 2;
     }
 
     judge(cell, count) {

@@ -17,7 +17,7 @@ import _ from "underscore";
 const styles = {
     generationCounter: {
         fontSize: "15pt"
-    },
+    }
 };
 
 class SimulationScreen extends React.Component {
@@ -29,7 +29,7 @@ class SimulationScreen extends React.Component {
 
         this.controls = React.createRef();
 
-        _.bindAll(this, "onSave", "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize");
+        _.bindAll(this, "onRefresh", "onSave", "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize");
         this.automaton = undefined;
     }
 
@@ -62,7 +62,7 @@ class SimulationScreen extends React.Component {
 
         this
             .automaton
-            .run(this.props.settings.interval);
+            .run(this.props.settings.get("interval"));
     }
 
     onStop() {
@@ -111,8 +111,38 @@ class SimulationScreen extends React.Component {
             .clear();
     }
 
+    onRefresh() {
+        if (this.automaton.isRunning()) {
+            console.error("GAME IS RUNING", this.automaton);
+            alert("STOP SIMULATION FIRST");
+            return;
+        }
+
+        var grid = this
+            .props
+            .settings
+            .get("grid");
+
+        try {
+
+            this
+                .automaton
+                .setCells(grid);
+        } catch(e) {
+            if (e instanceof Errors.InvalidGridError) {
+                alert("Incompatible grid data");
+            } else {
+                throw e;
+            }
+
+        }
+    }
+
     onSave() {
-        this.notifyChange();
+        this
+            .props
+            .settings
+            .saveAutomatonGrid(this.automaton);
     }
 
     componentDidUpdate(prevProps) {
@@ -135,32 +165,30 @@ class SimulationScreen extends React.Component {
 
     onCanvasClick(canvas, ev) {
         if (this.automaton.generation !== 0) {
-            alert("Rewind simulation before editing board");
+            alert("Only first generation can be edited. Rewind simulation before editing board");
             return;
         }
         var rect = canvas.getBoundingClientRect();
         var settings = this.props.settings;
-        var cellSide = settings.cellSize + settings.cellMargin - 1;
+        var cellSize = settings.get("cellSize")
+        var cellSide = cellSize + settings.get("cellMargin") - 1;
         var x = ev.clientX - rect.left;
         var y = ev.clientY - rect.top;
-        // x = Math.round(x); y = Math.round(y); var width = canvas.width -
-        // settings.cellMargin; var height = canvas.height - settings.cellMargin;
-        // cellSide = Math.floor(canvas.width / settings.gridWidth);
 
         var cellX = Math.floor(x / cellSide);
         var minX = Math.max(cellX - 3, 0);
-        var maxX = Math.min(cellX + 3, settings.gridWidth);
+        var maxX = Math.min(cellX + 3, settings.get("gridWidth"));
         var cellY = Math.floor(y / cellSide);
         var minY = Math.max(cellY - 3, 0);
-        var maxY = Math.min(cellY + 3, settings.gridHeight);
+        var maxY = Math.min(cellY + 3, settings.get("gridHeight"));
 
         for (var _x = minX; _x < maxX; _x++) {
             for (var _y = minY; _y < maxY; _y++) {
                 var cX0 = cellSide * _x;
-                var cX1 = cX0 + settings.cellSize;
+                var cX1 = cX0 + cellSize;
 
                 var cY0 = cellSide * _y;
-                var cY1 = cY0 + settings.cellSize;
+                var cY1 = cY0 + cellSize;
                 if (x > cX0 && x < cX1 && y > cY0 && y < cY1) {
                     // console.log("Found XY", x, y, _x, _y);
                     this.changeCell(_x, _y);
@@ -172,14 +200,11 @@ class SimulationScreen extends React.Component {
         // console.log("NOT Found XY");
     }
 
-    notifyChange() {
-        this
-            .props
-            .onAutomatonChanged(this.automaton);
-    }
-
     changeCell(x, y) {
-        var val = this.props.settings.currentValue;
+        var val = this
+            .props
+            .settings
+            .get("currentValue");
 
         if (!this.automaton.setCell(x, y, val)) {
             alert("Invalid value for this type of automaton");
@@ -188,7 +213,10 @@ class SimulationScreen extends React.Component {
     }
 
     newGame() {
-        var settings = this.props.settings;
+        var settings = this
+            .props
+            .settings
+            .toObject();
         console.log("--------------------------SIM NEW GAME", settings);
         var automatonType = makeAutomaton(settings.family);
         if (!automatonType) {
@@ -208,7 +236,7 @@ class SimulationScreen extends React.Component {
             };
             var render = new Renderer(canvas, settings, onRender);
 
-            newGame = new automatonType(render, settings.cells, settings.params, settings.gridWidth, settings.gridHeight, onRender,);
+            newGame = new automatonType(render, settings.grid, settings.params, settings.gridWidth, settings.gridHeight, onRender);
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {
@@ -235,12 +263,18 @@ class SimulationScreen extends React.Component {
         console.log("!!!!!!!!!!!!!!!!!");
         this.automaton = newGame;
         this
+            .props
+            .settings
+            .onAutomatonChanged(this.automaton);
+        this
             .automaton
             .render();
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        var settings = nextProps.settings;
+        var settings = nextProps
+            .settings
+            .toObject();
         var updated = nextProps.updatedSettings;
 
         if (_.isUndefined(settings) || _.isUndefined(updated)) {
@@ -274,7 +308,7 @@ class SimulationScreen extends React.Component {
                 .automaton
                 .setParams(settings.params);
             return false;
-        } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue")) {
+        } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue") || _.contains(updated, "activeTab")) {
             return false;
         } else {
             return true;
@@ -285,7 +319,14 @@ class SimulationScreen extends React.Component {
         console.log("SIM RENDER", this.props.settings);
         return (
             <div>
-                <Grid container direction="row" justify="center" alignItems="center" style={{margin:10}}>
+                <Grid
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    style={{
+                    margin: 10
+                }}>
                     <span id="generation-counter" style={styles.generationCounter}></span>
                 </Grid>
                 <SimulationControls
@@ -296,6 +337,7 @@ class SimulationScreen extends React.Component {
                     onRewind={this.onRewind}
                     onSave={this.onSave}
                     onRandomize={this.onRandomize}
+                    onRefresh={this.onRefresh}
                     onClear={this.onClear}/>
                 <div id="grid-wrapper">
                     <Grid container direction="row" justify="center" alignItems="flex-start">

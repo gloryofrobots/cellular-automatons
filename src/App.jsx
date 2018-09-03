@@ -46,7 +46,7 @@ class App extends React.Component {
         this.history = props.history;
 
         _.bindAll(this,
-             "onChangeSettings", "onAction", "onAutomatonChanged"
+             "onChangeSettings", "onAction"
         )
 
         this.settings = new Settings(this.onChangeSettings);
@@ -81,14 +81,6 @@ class App extends React.Component {
     onAction(action) {
     }
 
-    onAutomatonChanged(automaton){
-        console.log("automaton changed", automaton.cells);
-        this.settings.saveAutomaton(automaton);
-    }
-
-                //   <Typography variant="title" color="inherit" className="app-bar" >
-                //     Cellular Automatons
-                //   </Typography>
     render() {
         return (
           <MuiThemeProvider theme={getTheme()}>
@@ -107,8 +99,7 @@ class App extends React.Component {
                         <hr />
                         <SimulationScreen
                           ref={this.sim}
-                          onAutomatonChanged={this.onAutomatonChanged}
-                          settings={this.state.settings}
+                          settings={this.settings}
                           updatedSettings={this.state.updatedSettings}/>
 
 
