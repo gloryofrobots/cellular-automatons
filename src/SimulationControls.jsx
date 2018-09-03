@@ -132,7 +132,7 @@ class SimulationControls extends React.Component {
 
                     </div>
                 </Tooltip>
-                <Tooltip title="Save grid">
+                <Tooltip title="Save grid to browser storage">
                     <div>
                         <Button
                             variant="outlined"
@@ -144,7 +144,7 @@ class SimulationControls extends React.Component {
 
                     </div>
                 </Tooltip>
-                <Tooltip title="Load last saved grid">
+                <Tooltip title="Load last saved grid from browser storage">
                     <div>
                         <Button variant="outlined" onClick={this.onRefresh} disabled={!this.state.save}>
                             <RefreshIcon/>

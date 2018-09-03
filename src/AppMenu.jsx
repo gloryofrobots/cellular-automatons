@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import FileSaver from "file-saver";
+import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import $ from "jquery";
 
@@ -118,9 +119,15 @@ class AppMenu extends React.Component {
         return (
         <div>
             <Grid container spacing={0} justify="center" alignItems="center">
-                <Button onClick={this.handleAction("exportSettings")}>Export</Button>
-                <Button onClick={this.handleAction("importSettings")}>Import</Button>
-                <Button onClick={this.handleAction("defaultSettings")}>Reset</Button>
+                <Tooltip title="Save settings and grid data to file">
+                    <Button onClick={this.handleAction("exportSettings")}>Save</Button>
+                </Tooltip>
+                <Tooltip title="Load settings and grid data from file">
+                    <Button onClick={this.handleAction("importSettings")}>Load</Button>
+                </Tooltip>
+                <Tooltip title="Reset all data to default values">
+                    <Button onClick={this.handleAction("defaultSettings")}>Reset</Button>
+                </Tooltip>
             </Grid>
         </div>
         );

@@ -14,6 +14,7 @@ var DEFAULT = {
     currentValue:0,
     showValues:false,
     activeTab:0,
+    name:"gl_23_3",
     palette: [
         "#cccccc", "#669999", "#9c27b0", "#673ab7",
         "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4",
@@ -38,6 +39,13 @@ class Settings {
         this.updated = new Set();
         this.maxValue = 0;
         this.load();
+    }
+
+    getDefaultName() {
+        var re = /\//gi;
+        var family = this.get("family")
+        var params = this.get("params").replace(re, "_");
+        return `${family}_${params}`;
     }
 
     onAutomatonChanged(automaton) {
@@ -199,10 +207,20 @@ class Settings {
         this.set(key, newVal);
     }
 
-    set(key, val) {
+    setMany(data) {
+        _.each(data, (value, key)=>{
+            this._set(key, value);
+        });
+    }
+
+    _set(key, val) {
         this.settings[key] = val;
         this.updated.add(key);
         console.log("SET", key, val, this.updated);
+    }
+
+    set(key, val) {
+        this._set(key, val);
         this.triggerSave();
     }
 

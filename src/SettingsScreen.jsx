@@ -30,6 +30,9 @@ const styles = {
         marginLeft: 10,
         width: 200
     },
+    nameEdit: {
+        width: "50%"
+    },
     cellSide: {
         marginLeft: 10,
         width: 120
@@ -82,38 +85,31 @@ class SettingsScreen extends React.Component {
 
     handleChangeFamily(event) {
         var family = event.target.value;
-        var rules = this
-            .props
-            .settings
-            .getRules(family);
-        var rule = this
-            .props
-            .settings
-            .getRule(family);
-        var info = this
-            .props
-            .settings
-            .getInfo(family);
+        var settings = this.props.settings;
+        var rules = settings.getRules(family);
+        var rule = settings.getRule(family);
+        var info = settings.getInfo(family);
 
+        settings.setString("family", family);
+        settings.setMany({
+                name: settings.getDefaultName(),
+                grid: [],
+                currentValue: 0
+        });
+        // console.log("DEF NAMe",settings.getDefaultName())
+        //clearing grid to avoid confusion between families
         this.setState({
             rules: rules,
             rule: rule,
             info: info,
-            settings: this.updatedSettings("family", event.target.value)
+            settings: settings.toObject()
         });
-        this
-            .props
-            .settings
-            .setString("family", event.target.value);
-        //clearing grid to avoid confusion between families
-        this.props.settings.set("grid", []);
-        this.props.settings.set("currentValue", 0);
     }
 
     handleChangeRule(event) {
         this.setState({
             rule: event.target.value,
-            settings: this.updatedSettings("params", event.target.value)
+            settings: this.updatedSettings({"params": event.target.value})
         });
         this
             .props
@@ -121,9 +117,11 @@ class SettingsScreen extends React.Component {
             .setString("params", event.target.value);
     }
 
-    updatedSettings(key, val) {
+    updatedSettings(data) {
         var settings = _.clone(this.state.settings);
-        settings[key] = val;
+        _.each(data, (val, key)=>{
+            settings[key] = val;
+        })
         // console.log("upfated", settings);
         return settings;
     }
@@ -135,7 +133,7 @@ class SettingsScreen extends React.Component {
                 .settings
                 .setString(name, event.target.value);
             this.setState({
-                settings: this.updatedSettings(name, event.target.value)
+                settings: this.updatedSettings({[name]: event.target.value})
             });
         };
     }
@@ -148,7 +146,7 @@ class SettingsScreen extends React.Component {
                 .settings
                 .set(name, event.target.checked);
             this.setState({
-                settings: this.updatedSettings(name, event.target.checked)
+                settings: this.updatedSettings({[name]: event.target.checked})
             });
         };
 
@@ -212,6 +210,14 @@ class SettingsScreen extends React.Component {
                     <Tab style={styles.settingsTab} label="Editor"/>
                 </Tabs>
                 <IF isTrue={() => this.state.activeTab === 0}>
+                    <Grid container spacing={0} justify="center" alignItems="center">
+                        <TextField
+                            label="Name"
+                            value={this.state.settings.name}
+                            onChange={this.handleChange("name")}
+                            margin="normal"
+                            style={styles.nameEdit}/>
+                    </Grid>
                     <Grid container spacing={0} justify="center" alignItems="center">
                         <FormControl>
                             <InputLabel shrink>
