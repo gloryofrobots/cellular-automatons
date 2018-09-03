@@ -14,9 +14,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import ShuffleIcon from '@material-ui/icons/Shuffle';
-import ClearIcon from '@material-ui/icons/Clear';
-import IconButton from '@material-ui/core/IconButton';
 
 import {IF} from "./Lang";
 
@@ -68,23 +65,7 @@ class SettingsScreen extends React.Component {
             info: settings.getInfo(family)
         };
         // console.log("SETATE SETTINGS", this.state);
-        this.onActionCallback = props.onAction;
-
-        this.onTabChanged = this
-            .onTabChanged
-            .bind(this);
-        this.onSetDefaults = this
-            .onSetDefaults
-            .bind(this);
-        this.onToggleEditor = this
-            .onToggleEditor
-            .bind(this);
-        this.handleChangeRule = this
-            .handleChangeRule
-            .bind(this);
-        this.handleChangeFamily = this
-            .handleChangeFamily
-            .bind(this);
+        _.bindAll(this, "onTabChanged", "onSetDefaults", "onToggleEditor", "handleChangeRule", "handleChangeFamily");
     }
 
     onToggleEditor() {
@@ -271,20 +252,8 @@ class SettingsScreen extends React.Component {
                 </IF>
                 <IF isTrue={() => this.state.activeTab === 1}>
                     <Grid container spacing={0} justify="center" style={styles.paletteGrid}>
-
                         <Grid container spacing={0} justify="center" alignItems="center">
-                            <IconButton
-                                variant="outlined"
-                                style={styles.toolButton}
-                                onClick={this.handleAction("randomize")}>
-                                <ShuffleIcon/>
-                            </IconButton>
-                            <IconButton
-                                variant="outlined"
-                                style={styles.toolButton}
-                                onClick={this.handleAction("clear")}>
-                                <ClearIcon/>
-                            </IconButton>
+
                             <TextField
                                 label="Cell side"
                                 value={this.state.settings.cellSize}

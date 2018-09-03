@@ -59,6 +59,12 @@ class App extends React.Component {
     }
 
     componentWillMount(){
+        window.addEventListener("beforeunload", (event)=>{
+            var sim = this.sim.current;
+            if(!_.isUndefined(sim.automaton)) {
+                this.settings.saveAutomaton(sim.automaton, true);
+            }
+        });
     }
 
     componentWillUnmount(){
@@ -73,17 +79,11 @@ class App extends React.Component {
     }
 
     onAction(action) {
-        // var sim = docum
-        var sim = this.sim.current;
-        if(action === "clear") {
-            sim.clear();
-        } else if(action === "randomize") {
-            sim.randomize();
-        }
     }
 
     onAutomatonChanged(automaton){
-        this.settings.saveAutomaton(automaton);
+        console.log("automaton changed", automaton.cells);
+        this.settings.saveAutomaton(automaton, false);
     }
 
                 //   <Typography variant="title" color="inherit" className="app-bar" >

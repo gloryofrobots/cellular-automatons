@@ -1,151 +1,122 @@
-
 import React from 'react';
-import automaton from "./Automaton";
+import makeAutomaton from "./Automaton";
 import Renderer from "./Renderer";
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import $ from "jquery";
 import * as Errors from "./Errors";
 // var $ = require("jquery");
-import PaletteEditor from "./PaletteEditor";
+import Tooltip from '@material-ui/core/Tooltip';
+import ShuffleIcon from '@material-ui/icons/Shuffle';
+import ClearIcon from '@material-ui/icons/Clear';
+import IconButton from '@material-ui/core/IconButton';
 
+import SimulationControls from "./SimulationControls";
+import $ from "jquery";
 import _ from "underscore";
 
 const styles = {
-    generationCounter:{
-        fontSize:"15pt"
-    }
+    generationCounter: {
+        fontSize: "15pt"
+    },
+    toolButton: {
+        marginLeft: 10
+    },
 };
 
-class SimControls extends React.Component {
-    constructor(props){
-        super(props);
-        this.state={
-            step:true,
-            stop:false,
-            run:true,
-            rewind:true
-        };
-
-        this.onRewind = this.onRewind.bind(this);
-        this.onStep = this.onStep.bind(this);
-        this.onRun = this.onRun.bind(this);
-        this.onStop = this.onStop.bind(this);
-    }
-
-    stop() {
-        this.onStop();
-    }
-
-    onStep() {
-        this.props.onStep();
-    }
-
-    onRun() {
-        this.setState({
-            step:false,
-            stop:true,
-            run:false,
-            rewind:false
-        });
-        this.props.onRun();
-    }
-
-    onStop() {
-        this.setState({
-            step:true,
-            stop:false,
-            run:true,
-            rewind:true
-        });
-        this.props.onStop();
-    }
-
-    onRewind() {
-        this.setState({
-            step:true,
-            stop:false,
-            run:true,
-            rewind:true
-        });
-        this.props.onRewind();
-    }
-
-    render () {
-        return (
-            <p className="center">
-                <span  id="generation-counter" style={styles.generationCounter}>0</span>
-                <Button variant="outlined" onClick={this.onRun} disabled={!this.state.run}>Run</Button>
-                <Button variant="outlined" onClick={this.onStop} disabled={!this.state.stop}>Stop</Button>
-                <Button variant="outlined" onClick={this.onStep} disabled={!this.state.step}>Step</Button>
-                <Button variant="outlined" onClick={this.onRewind} disabled={!this.state.rewind} >Rewind</Button>
-            </p>
-        );
-    }
-}
 
 class SimulationScreen extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-        };
+        this.state = {};
 
         console.log("Sim.NEW", this.props.settings);
 
         this.controls = React.createRef();
-        this.onRewind = this.onRewind.bind(this);
-        this.onStep = this.onStep.bind(this);
-        this.onRun = this.onRun.bind(this);
-        this.onStop = this.onStop.bind(this);
-        this.game=undefined;
+
+        _.bindAll(this, "onRewind", "onStep", "onRun", "onStop", "onClear", "onRandomize");
+        this.automaton = undefined;
     }
 
     onStep() {
-        if (this.game === undefined){
+        if (this.automaton === undefined) {
             console.log("GAME UNDEF");
             return;
         }
-        if (this.game.isRunning()) {
+        if (this.automaton.isRunning()) {
             alert("Still running");
             return;
         }
-        if (this.game.interval) {
+        if (this.automaton.interval) {
             return;
         }
-        this.game.update();
+        this
+            .automaton
+            .update();
     }
 
     onRun() {
-        if (this.game === undefined){
+        if (this.automaton === undefined) {
             console.log("GAME UNDEF");
             return;
         }
-        if (this.game.isRunning()) {
+        if (this.automaton.isRunning()) {
             alert("Still running");
             return;
         }
 
-        this.game.run(this.props.settings.interval);
+        this
+            .automaton
+            .run(this.props.settings.interval);
     }
 
     onStop() {
-        if (this.game === undefined){
+        if (this.automaton === undefined) {
             console.log("GAME UNDEF");
             return;
         }
-        this.game.stop();
+        this
+            .automaton
+            .stop();
     }
 
     onRewind() {
-        if (this.game === undefined){
+        if (this.automaton === undefined) {
             console.log("GAME UNDEF");
             return;
         }
-        if (this.game.isRunning()) {
+        if (this.automaton.isRunning()) {
             alert("Still running");
             return;
         }
-        this.game.rewind();
+        this
+            .automaton
+            .rewind();
+    }
+
+    onRandomize() {
+        if (this.automaton.isRunning()) {
+            console.error("GAME IS RUNING", this.automaton);
+            alert("STOP SIMULATION FIRST");
+            return;
+        }
+        this
+            .automaton
+            .randomize();
+
+        this.notifyChange();
+    }
+
+    onClear() {
+        if (this.automaton.isRunning()) {
+            console.error("GAME IS RUNING", this.automaton);
+            alert("STOP SIMULATION FIRST");
+            return;
+        }
+        this
+            .automaton
+            .clear();
+
+        this.notifyChange();
     }
 
     componentDidUpdate(prevProps) {
@@ -156,7 +127,9 @@ class SimulationScreen extends React.Component {
 
         console.log("MACKING NEW GAME");
         this.newGame();
-        this.game.render();
+        this
+            .automaton
+            .render();
     }
 
     componentDidMount() {
@@ -165,7 +138,7 @@ class SimulationScreen extends React.Component {
     }
 
     onCanvasClick(canvas, ev) {
-        if(this.game.generation !== 0) {
+        if (this.automaton.generation !== 0) {
             alert("Rewind simulation before editing board");
             return;
         }
@@ -174,11 +147,8 @@ class SimulationScreen extends React.Component {
         var cellSide = settings.cellSize + settings.cellMargin - 1;
         var x = ev.clientX - rect.left;
         var y = ev.clientY - rect.top;
-        // x = Math.round(x);
-        // y = Math.round(y);
-
-        // var width = canvas.width - settings.cellMargin;
-        // var height = canvas.height - settings.cellMargin;
+        // x = Math.round(x); y = Math.round(y); var width = canvas.width -
+        // settings.cellMargin; var height = canvas.height - settings.cellMargin;
         // cellSide = Math.floor(canvas.width / settings.gridWidth);
 
         var cellX = Math.floor(x / cellSide);
@@ -188,14 +158,14 @@ class SimulationScreen extends React.Component {
         var minY = Math.max(cellY - 3, 0);
         var maxY = Math.min(cellY + 3, settings.gridHeight);
 
-        for(var _x = minX; _x < maxX; _x++){
-            for(var _y = minY; _y < maxY; _y++){
+        for (var _x = minX; _x < maxX; _x++) {
+            for (var _y = minY; _y < maxY; _y++) {
                 var cX0 = cellSide * _x;
                 var cX1 = cX0 + settings.cellSize;
 
                 var cY0 = cellSide * _y;
                 var cY1 = cY0 + settings.cellSize;
-                if(x > cX0 && x < cX1 && y > cY0 && y < cY1) {
+                if (x > cX0 && x < cX1 && y > cY0 && y < cY1) {
                     // console.log("Found XY", x, y, _x, _y);
                     this.changeCell(_x, _y);
                     return;
@@ -206,20 +176,28 @@ class SimulationScreen extends React.Component {
         // console.log("NOT Found XY");
     }
 
+    notifyChange(){
+        this
+            .props
+            .onAutomatonChanged(this.automaton);
+    }
+
     changeCell(x, y) {
         var val = this.props.settings.currentValue;
-        if(!this.game.setCell(x, y, val)){
+
+        if (!this.automaton.setCell(x, y, val)) {
             alert("Invalid value for this type of automaton");
             return;
         }
-        this.props.onAutomatonChanged(this.game);
+
+        this.notifyChange();
     }
 
     newGame() {
         var settings = this.props.settings;
         console.log("--------------------------SIM NEW GAME", settings);
-        var automatonType = automaton(settings.family);
-        if (!automatonType){
+        var automatonType = makeAutomaton(settings.family);
+        if (!automatonType) {
             alert("Error wrong type");
             return;
         }
@@ -227,109 +205,82 @@ class SimulationScreen extends React.Component {
         var newGame;
         try {
             var canvas = document.getElementById("grid");
-            canvas.addEventListener('click', (ev)=>this.onCanvasClick(canvas, ev), false);
+            canvas.addEventListener('click', (ev) => this.onCanvasClick(canvas, ev), false);
 
             var counter = $("#generation-counter");
-            const onRender = (game) => {
-                // counter.html(" GENERATION " + this.game.generation + "");
+            const onRender = (automaton) => {
+                // counter.html(" GENERATION " + this.automaton.generation + "");
                 counter.html(" [ " + newGame.generation + " ]");
             };
             var render = new Renderer(canvas, settings, onRender);
 
-            newGame = new automatonType(
-                render, settings.cells, settings.params, settings.gridWidth,
-                settings.gridHeight, onRender,
-            );
+            newGame = new automatonType(render, settings.cells, settings.params, settings.gridWidth, settings.gridHeight, onRender,);
 
-       } catch(e) {
-           if(e instanceof Errors.InvalidParamsError) {
-               alert("Invalid automaton params");
-               if(this.game) {
-                   this.game.rewind();
-               }
+        } catch (e) {
+            if (e instanceof Errors.InvalidParamsError) {
+                alert("Invalid automaton params");
+                if (this.automaton) {
+                    this
+                        .automaton
+                        .rewind();
+                }
 
-               return;
-           } else {
-               console.error(e);
-           }
-       }
+                return;
+            } else {
+                console.error(e);
+            }
+        }
 
-        if (this.game !== undefined) {
+        if (this.automaton !== undefined) {
             console.log("GAME STOPPED NEW GAME");
-            this.game.stop();
-            this.game = undefined;
+            this
+                .automaton
+                .stop();
+            this.automaton = undefined;
         }
         console.log("!!!!!!!!!!!!!!!!!");
-        this.game = newGame;
-        this.game.render();
-    }
-
-    randomize() {
-        if(this.game.isRunning()) {
-            console.error("GAME IS RUNING", this.game);
-            alert("STOP SIMULATION FIRST");
-            return;
-        }
-        this.game.randomize();
-    }
-
-    clear(){
-        if(this.game.isRunning()) {
-            console.error("GAME IS RUNING", this.game);
-            alert("STOP SIMULATION FIRST");
-            return;
-        }
-        this.game.clear();
-    }
-
-    load(filename){
-        if(this.game.isRunning()) {
-            console.error("GAME IS RUNING", this.game);
-            alert("STOP SIMULATION FIRST");
-            return;
-        }
-        this.game.load();
-    }
-
-    save(filename){
-        if(this.game.isRunning()) {
-            console.error("GAME IS RUNING", this.game);
-            alert("STOP SIMULATION FIRST");
-            return;
-        }
-        this.game.save(filename);
+        this.automaton = newGame;
+        this
+            .automaton
+            .render();
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         var settings = nextProps.settings;
         var updated = nextProps.updatedSettings;
 
-        if(_.isUndefined(settings) || _.isUndefined(updated)){
+        if (_.isUndefined(settings) || _.isUndefined(updated)) {
             return true;
         }
 
-        if(this.game && this.game.isRunning()) {
+        if (this.automaton && this.automaton.isRunning()) {
             //emulate stop
-            this.controls.current.stop();
+            this
+                .controls
+                .current
+                .stop();
         }
 
         console.log("SHOULD", updated);
-        if(updated.length !== 1) {
+        if (updated.length !== 1) {
             return true;
         }
-        if(_.contains(updated, "palette")) {
-            this.game.setPalette(settings.palette);
+        if (_.contains(updated, "palette")) {
+            this
+                .automaton
+                .setPalette(settings.palette);
             return false;
-        } else if(_.contains(updated, "cellMargin") ||
-                  _.contains(updated, "cellSize") ||
-                  _.contains(updated, "showValues")) {
-            this.game.setRenderSettings(settings);
+        } else if (_.contains(updated, "cellMargin") || _.contains(updated, "cellSize") || _.contains(updated, "showValues")) {
+            this
+                .automaton
+                .setRenderSettings(settings);
             return false;
-        } else if(_.contains(updated, "params")) {
-            this.game.setParams(settings.params);
+        } else if (_.contains(updated, "params")) {
+            this
+                .automaton
+                .setParams(settings.params);
             return false;
-        } else if (_.contains(updated, "interval") ||
-                  _.contains(updated, "currentValue")) {
+        } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue")) {
             return false;
         } else {
             return true;
@@ -340,23 +291,20 @@ class SimulationScreen extends React.Component {
         console.log("SIM RENDER", this.props.settings);
         return (
             <div>
-              <SimControls
-                ref={this.controls}
-                onRun={this.onRun}
-                onStop={this.onStop}
-                onStep={this.onStep}
-                onRewind={this.onRewind}
-                />
-                 <div id="grid-wrapper"> 
-                    <Grid
-                    container
-                    direction="row"
-                    justify="center"
-                    alignItems="flex-start"
-                    >
-                 <canvas id="grid" className="grid-view"> </canvas>
-                 </Grid>
-                 </div>
+                <SimulationControls
+                    ref={this.controls}
+                    onRun={this.onRun}
+                    onStop={this.onStop}
+                    onStep={this.onStep}
+                    onRewind={this.onRewind}
+                    onRandomize={this.onRandomize}
+                    onClear={this.onClear}
+                    />
+                <div id="grid-wrapper">
+                    <Grid container direction="row" justify="center" alignItems="flex-start">
+                        <canvas id="grid" className="grid-view"></canvas>
+                    </Grid>
+                </div>
             </div>
         );
     }

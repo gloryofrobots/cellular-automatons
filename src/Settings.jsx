@@ -1,5 +1,6 @@
 import _ from "underscore";
 import ATTRS from "./Attrs"
+import Conf from "./Conf"
 
 
 var DEFAULT = {
@@ -248,20 +249,27 @@ class Settings {
                 this.load();
                 this.onUpdate();
             },
-            500
+            Conf.saveSettingsTimeout
         );
     }
 
-    saveAutomaton(automaton){
+    _saveAutomaton(automaton){
+        var data = JSON.stringify(automaton.cells);
+        localStorage.setItem("cells", data);
+    }
+    saveAutomaton(automaton, force){
+        if(force) {
+            this._saveAutomaton(automaton);
+            return;
+        }
         if(!_.isUndefined(this.saveAutomatonInterval)) {
             clearTimeout(this.saveAutomatonInterval);
         }
         this.saveAutomatonInterval = setTimeout(
             () => {
-                var data = JSON.stringify(automaton.cells);
-                localStorage.setItem("cells", data);
+                this._saveAutomaton(automaton)
             },
-            1000
+            Conf.saveAutomatonTimeout
         );
     }
 

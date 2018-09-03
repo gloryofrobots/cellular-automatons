@@ -366,8 +366,8 @@ const TYPES = {
     "bb": BriansBrain
 };
 
-function automaton(type) {
+function makeAutomaton(type) {
     return TYPES[type];
 }
 
-export default automaton;
+export default makeAutomaton;
