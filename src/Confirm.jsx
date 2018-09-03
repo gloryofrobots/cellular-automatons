@@ -25,7 +25,6 @@ class Confirm extends React.Component {
     };
 
     render() {
-        console.log("CONF RENDER", this.state, this.props);
         return (
             <div>
                 <Dialog

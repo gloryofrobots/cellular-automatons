@@ -99,10 +99,10 @@ class AppMenu extends React.Component {
         <div>
             <Grid container spacing={0} justify="center" alignItems="center">
                 <Tooltip title="Save settings and grid data to file">
-                    <Button onClick={this.handleAction("exportSettings")}>Save</Button>
+                    <Button onClick={this.handleAction("exportSettings")}>Export</Button>
                 </Tooltip>
                 <Tooltip title="Load settings and grid data from file">
-                    <Button onClick={this.handleAction("importSettings")}>Load</Button>
+                    <Button onClick={this.handleAction("importSettings")}>Import</Button>
                 </Tooltip>
                 <Tooltip title="Reset all data to default values">
                     <Button onClick={this.handleAction("defaultSettings")}>Reset</Button>
