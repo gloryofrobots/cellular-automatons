@@ -18,11 +18,7 @@ const styles = {
     generationCounter: {
         fontSize: "15pt"
     },
-    toolButton: {
-        marginLeft: 10
-    },
 };
-
 
 class SimulationScreen extends React.Component {
     constructor(props) {
@@ -102,8 +98,6 @@ class SimulationScreen extends React.Component {
         this
             .automaton
             .randomize();
-
-        this.notifyChange();
     }
 
     onClear() {
@@ -115,8 +109,6 @@ class SimulationScreen extends React.Component {
         this
             .automaton
             .clear();
-
-        this.notifyChange();
     }
 
     onSave() {
@@ -180,7 +172,7 @@ class SimulationScreen extends React.Component {
         // console.log("NOT Found XY");
     }
 
-    notifyChange(){
+    notifyChange() {
         this
             .props
             .onAutomatonChanged(this.automaton);
@@ -193,8 +185,6 @@ class SimulationScreen extends React.Component {
             alert("Invalid value for this type of automaton");
             return;
         }
-
-        this.notifyChange();
     }
 
     newGame() {
@@ -214,7 +204,7 @@ class SimulationScreen extends React.Component {
             var counter = $("#generation-counter");
             const onRender = (automaton) => {
                 // counter.html(" GENERATION " + this.automaton.generation + "");
-                counter.html(" [ " + newGame.generation + " ]");
+                counter.html("Generation [ " + newGame.generation + " ]");
             };
             var render = new Renderer(canvas, settings, onRender);
 
@@ -295,6 +285,9 @@ class SimulationScreen extends React.Component {
         console.log("SIM RENDER", this.props.settings);
         return (
             <div>
+                <Grid container direction="row" justify="center" alignItems="center" style={{margin:10}}>
+                    <span id="generation-counter" style={styles.generationCounter}></span>
+                </Grid>
                 <SimulationControls
                     ref={this.controls}
                     onRun={this.onRun}
@@ -303,8 +296,7 @@ class SimulationScreen extends React.Component {
                     onRewind={this.onRewind}
                     onSave={this.onSave}
                     onRandomize={this.onRandomize}
-                    onClear={this.onClear}
-                    />
+                    onClear={this.onClear}/>
                 <div id="grid-wrapper">
                     <Grid container direction="row" justify="center" alignItems="flex-start">
                         <canvas id="grid" className="grid-view"></canvas>

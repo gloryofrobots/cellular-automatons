@@ -43,6 +43,7 @@ class SimulationControls extends React.Component {
     }
 
     onStep() {
+        this.setState({save:false});
         this
             .props
             .onStep();
@@ -93,7 +94,6 @@ class SimulationControls extends React.Component {
     render() {
         return (
             <Grid container spacing={0} justify="center" alignItems="center">
-                <span id="generation-counter" style={styles.generationCounter}>0</span>
 
                 <Tooltip title="Play">
                     <div>
@@ -134,7 +134,7 @@ class SimulationControls extends React.Component {
                             style={styles.toolButton}
                             onClick={this.onSave}
                             disabled={!this.state.save}>
-                            <SaveIcon color="primary"/>
+                            <SaveIcon />
                         </Button>
 
                     </div>

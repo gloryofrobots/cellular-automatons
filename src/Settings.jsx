@@ -253,24 +253,9 @@ class Settings {
         );
     }
 
-    _saveAutomaton(automaton){
+    saveAutomaton(automaton, force){
         var data = JSON.stringify(automaton.cells);
         localStorage.setItem("cells", data);
-    }
-    saveAutomaton(automaton, force){
-        if(force) {
-            this._saveAutomaton(automaton);
-            return;
-        }
-        if(!_.isUndefined(this.saveAutomatonInterval)) {
-            clearTimeout(this.saveAutomatonInterval);
-        }
-        this.saveAutomatonInterval = setTimeout(
-            () => {
-                this._saveAutomaton(automaton)
-            },
-            Conf.saveAutomatonTimeout
-        );
     }
 
     save() {
