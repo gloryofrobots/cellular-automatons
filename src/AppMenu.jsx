@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import FileSaver from "file-saver";
 import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
-import $ from "jquery";
+import Confirm from "./Confirm";
 
 const styles = {
   root: {
@@ -28,6 +28,7 @@ const styles = {
 class AppMenu extends React.Component {
     state = {
         anchorEl: null,
+        openResetConfirm:false
     };
 
     handleClick = event => {
@@ -70,11 +71,16 @@ class AppMenu extends React.Component {
         file_input.click();
     }
 
+    resetSettings = () => {
+        this.props.settings.setDefaultValues();
+        this.setState({openResetConfirm:false});
+    }
+
     handleAction(name) {
         return () => {
             var settings = this.props.settings;
             if(name === "defaultSettings") {
-                settings.setDefaultValues();
+                this.setState({openResetConfirm:true})
             } else if(name === "exportSettings"){
                 this.exportSettings();
             } else if(name === "importSettings"){
@@ -85,34 +91,6 @@ class AppMenu extends React.Component {
 
     }
 
-    render2() {
-        const { anchorEl } = this.state;
-        const { classes } = this.props;
-        const open = Boolean(anchorEl);
-        return (
-        <div>
-
-            <Button
-              className={classes.menuButton}
-              color="inherit"
-              variant="outlined"
-              aria-label="Menu"
-              onClick={this.handleClick}>
-              Settings
-            </Button>
-            <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={this.handleClose}
-            >
-            <MenuItem onClick={this.handleAction("exportSettings")}>Export</MenuItem>
-            <MenuItem onClick={this.handleAction("importSettings")}>Import</MenuItem>
-            <MenuItem onClick={this.handleAction("defaultSettings")}>Reset</MenuItem>
-            </Menu>
-        </div>
-        );
-    }
     render() {
         const { anchorEl } = this.state;
         const { classes } = this.props;
@@ -130,6 +108,13 @@ class AppMenu extends React.Component {
                     <Button onClick={this.handleAction("defaultSettings")}>Reset</Button>
                 </Tooltip>
             </Grid>
+            <Confirm 
+                onAccept={this.resetSettings}
+                onCancel={()=>{this.setState({openResetConfirm:false})}}
+                title="Please confirm!"
+                message="This action will reset all settings and clear the grid."
+                open={this.state.openResetConfirm}/>
+                 
         </div>
         );
     }

@@ -36,7 +36,6 @@ class Feedback extends React.Component {
 
     render() {
         const {vertical, horizontal, message, duration} = this.state;
-        console.log("RENDER FB", this.state)
         const Close = (
             <IconButton
                 key="close"

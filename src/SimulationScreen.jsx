@@ -39,7 +39,7 @@ class SimulationScreen extends React.Component {
             return;
         }
         if (this.automaton.isRunning()) {
-            this.alert("Still running");
+            this.notify("Still running");
             return;
         }
         if (this.automaton.interval) {
@@ -56,7 +56,7 @@ class SimulationScreen extends React.Component {
             return;
         }
         if (this.automaton.isRunning()) {
-            this.alert("Still running");
+            this.notify("Still running");
             return;
         }
 
@@ -81,7 +81,7 @@ class SimulationScreen extends React.Component {
             return;
         }
         if (this.automaton.isRunning()) {
-            this.alert("Still running");
+            this.notify("Still running");
             return;
         }
         this
@@ -92,7 +92,7 @@ class SimulationScreen extends React.Component {
     onRandomize() {
         if (this.automaton.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
-            this.alert("STOP SIMULATION FIRST");
+            this.notify("STOP SIMULATION FIRST");
             return;
         }
         this
@@ -103,7 +103,7 @@ class SimulationScreen extends React.Component {
     onClear() {
         if (this.automaton.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
-            this.alert("STOP SIMULATION FIRST");
+            this.notify("STOP SIMULATION FIRST");
             return;
         }
         this
@@ -114,7 +114,7 @@ class SimulationScreen extends React.Component {
     onRefresh() {
         if (this.automaton.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
-            this.alert("STOP SIMULATION FIRST");
+            this.notify("STOP SIMULATION FIRST");
             return;
         }
 
@@ -128,10 +128,10 @@ class SimulationScreen extends React.Component {
             this
                 .automaton
                 .setCells(grid);
-            this.alert("Loaded", 700)
+            this.notify("Loaded", 700)
         } catch(e) {
             if (e instanceof Errors.InvalidGridError) {
-                this.alert("Incompatible grid data");
+                this.notify("Incompatible grid data");
             } else {
                 throw e;
             }
@@ -144,7 +144,7 @@ class SimulationScreen extends React.Component {
             .props
             .settings
             .saveAutomatonGrid(this.automaton);
-        this.alert("Saved", 700)
+        this.notify("Saved", 700)
     }
 
     componentDidUpdate(prevProps) {
@@ -167,7 +167,7 @@ class SimulationScreen extends React.Component {
 
     onCanvasClick(canvas, ev) {
         if (this.automaton.generation !== 0) {
-            this.alert("Only first generation can be edited. Rewind simulation before editing board");
+            this.notify("Only first generation can be edited. Rewind simulation before editing board");
             return;
         }
         var rect = canvas.getBoundingClientRect();
@@ -206,7 +206,7 @@ class SimulationScreen extends React.Component {
         this.props.notify("Click");
     }
 
-    alert(msg, duration) {
+    notify(msg, duration) {
         this.props.notify(msg, duration);
     }
 
@@ -217,7 +217,7 @@ class SimulationScreen extends React.Component {
             .get("currentValue");
 
         if (!this.automaton.setCell(x, y, val)) {
-            this.alert("Invalid value for this type of automaton");
+            this.notify("Invalid value for this type of automaton");
             return;
         }
     }
@@ -230,7 +230,7 @@ class SimulationScreen extends React.Component {
         console.log("--------------------------SIM NEW GAME", settings);
         var automatonType = makeAutomaton(settings.family);
         if (!automatonType) {
-            this.alert("Error wrong type");
+            this.notify("Error wrong type");
             return;
         }
 
@@ -250,7 +250,7 @@ class SimulationScreen extends React.Component {
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {
-               this.alert("Invalid automaton params");
+               this.notify("Invalid automaton params");
                 if (this.automaton) {
                     this
                         .automaton
