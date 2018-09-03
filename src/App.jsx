@@ -26,6 +26,7 @@ import Settings from "./Settings";
 import SettingsScreen from "./SettingsScreen";
 import SimulationScreen from './SimulationScreen';
 import AppMenu from "./AppMenu";
+import Feedback from "./Feedback"
 
 import {
   Route,
@@ -46,11 +47,14 @@ class App extends React.Component {
         this.history = props.history;
 
         _.bindAll(this,
-             "onChangeSettings", "onAction"
+             "onChangeSettings", "onAction", "notify"
         )
 
         this.settings = new Settings(this.onChangeSettings);
         this.sim = React.createRef();
+        this.feedback = React.createRef();
+    
+
         this.state = {
             currentValue:0,
             settings:this.settings.toObject(),
@@ -78,6 +82,10 @@ class App extends React.Component {
         });
     }
 
+    notify(msg, duration) {
+        this.feedback.current.message(msg, duration);
+    }
+
     onAction(action) {
     }
 
@@ -99,10 +107,11 @@ class App extends React.Component {
                         <hr />
                         <SimulationScreen
                           ref={this.sim}
+                          notify={this.notify}
                           settings={this.settings}
                           updatedSettings={this.state.updatedSettings}/>
 
-
+                        <Feedback message="" ref={this.feedback}/> 
                         <Route path="/" render={(props)=> (<div></div>)}/>
                     </main>
                 </Router>

@@ -41,7 +41,8 @@ class AppMenu extends React.Component {
     exportSettings() {
         var data = this.props.settings.serialize();
         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-        FileSaver.saveAs(blob, "cellular-vis-settings.json");
+        var filename = `${this.props.settings.get("name")}.json`;
+        FileSaver.saveAs(blob, filename);
     }
 
     componentDidMount() {

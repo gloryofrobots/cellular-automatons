@@ -39,7 +39,7 @@ class SimulationScreen extends React.Component {
             return;
         }
         if (this.automaton.isRunning()) {
-            alert("Still running");
+            this.alert("Still running");
             return;
         }
         if (this.automaton.interval) {
@@ -56,7 +56,7 @@ class SimulationScreen extends React.Component {
             return;
         }
         if (this.automaton.isRunning()) {
-            alert("Still running");
+            this.alert("Still running");
             return;
         }
 
@@ -81,7 +81,7 @@ class SimulationScreen extends React.Component {
             return;
         }
         if (this.automaton.isRunning()) {
-            alert("Still running");
+            this.alert("Still running");
             return;
         }
         this
@@ -92,7 +92,7 @@ class SimulationScreen extends React.Component {
     onRandomize() {
         if (this.automaton.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
-            alert("STOP SIMULATION FIRST");
+            this.alert("STOP SIMULATION FIRST");
             return;
         }
         this
@@ -103,7 +103,7 @@ class SimulationScreen extends React.Component {
     onClear() {
         if (this.automaton.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
-            alert("STOP SIMULATION FIRST");
+            this.alert("STOP SIMULATION FIRST");
             return;
         }
         this
@@ -114,7 +114,7 @@ class SimulationScreen extends React.Component {
     onRefresh() {
         if (this.automaton.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
-            alert("STOP SIMULATION FIRST");
+            this.alert("STOP SIMULATION FIRST");
             return;
         }
 
@@ -128,9 +128,10 @@ class SimulationScreen extends React.Component {
             this
                 .automaton
                 .setCells(grid);
+            this.alert("Loaded", 700)
         } catch(e) {
             if (e instanceof Errors.InvalidGridError) {
-                alert("Incompatible grid data");
+                this.alert("Incompatible grid data");
             } else {
                 throw e;
             }
@@ -143,6 +144,7 @@ class SimulationScreen extends React.Component {
             .props
             .settings
             .saveAutomatonGrid(this.automaton);
+        this.alert("Saved", 700)
     }
 
     componentDidUpdate(prevProps) {
@@ -165,7 +167,7 @@ class SimulationScreen extends React.Component {
 
     onCanvasClick(canvas, ev) {
         if (this.automaton.generation !== 0) {
-            alert("Only first generation can be edited. Rewind simulation before editing board");
+            this.alert("Only first generation can be edited. Rewind simulation before editing board");
             return;
         }
         var rect = canvas.getBoundingClientRect();
@@ -192,12 +194,20 @@ class SimulationScreen extends React.Component {
                 if (x > cX0 && x < cX1 && y > cY0 && y < cY1) {
                     // console.log("Found XY", x, y, _x, _y);
                     this.changeCell(_x, _y);
+
+                    // this.props.notify("Click " + _x, + " " + _y);
                     return;
                 }
                 // console.log("NOT FOUND", _x, _y);
             }
         }
         // console.log("NOT Found XY");
+
+        this.props.notify("Click");
+    }
+
+    alert(msg, duration) {
+        this.props.notify(msg, duration);
     }
 
     changeCell(x, y) {
@@ -207,7 +217,7 @@ class SimulationScreen extends React.Component {
             .get("currentValue");
 
         if (!this.automaton.setCell(x, y, val)) {
-            alert("Invalid value for this type of automaton");
+            this.alert("Invalid value for this type of automaton");
             return;
         }
     }
@@ -220,7 +230,7 @@ class SimulationScreen extends React.Component {
         console.log("--------------------------SIM NEW GAME", settings);
         var automatonType = makeAutomaton(settings.family);
         if (!automatonType) {
-            alert("Error wrong type");
+            this.alert("Error wrong type");
             return;
         }
 
@@ -240,7 +250,7 @@ class SimulationScreen extends React.Component {
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {
-                alert("Invalid automaton params");
+               this.alert("Invalid automaton params");
                 if (this.automaton) {
                     this
                         .automaton

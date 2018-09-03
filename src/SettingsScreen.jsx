@@ -14,6 +14,11 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import {IF} from "./Lang";
 
@@ -92,12 +97,12 @@ class SettingsScreen extends React.Component {
 
         settings.setString("family", family);
         settings.setMany({
-                name: settings.getDefaultName(),
-                grid: [],
-                currentValue: 0
+            name: settings.getDefaultName(),
+            grid: [],
+            currentValue: 0
         });
-        // console.log("DEF NAMe",settings.getDefaultName())
-        //clearing grid to avoid confusion between families
+        // console.log("DEF NAMe",settings.getDefaultName()) clearing grid to avoid
+        // confusion between families
         this.setState({
             rules: rules,
             rule: rule,
@@ -119,7 +124,7 @@ class SettingsScreen extends React.Component {
 
     updatedSettings(data) {
         var settings = _.clone(this.state.settings);
-        _.each(data, (val, key)=>{
+        _.each(data, (val, key) => {
             settings[key] = val;
         })
         // console.log("upfated", settings);
@@ -247,7 +252,15 @@ class SettingsScreen extends React.Component {
                         marginLeft: "10%",
                         maxWidth: "80%"
                     }}>
-                        <this.state.info/>
+                        <ExpansionPanel>
+                            <ExpansionPanelSummary expandIcon={< ExpandMoreIcon />}>
+                                <Typography>Description</Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+
+                                    <this.state.info/>
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
                     </Grid>
                     <Grid
                         container
