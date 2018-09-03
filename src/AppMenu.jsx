@@ -74,6 +74,7 @@ class AppMenu extends React.Component {
     resetSettings = () => {
         this.props.settings.setDefaultValues();
         this.setState({openResetConfirm:false});
+        window.location.reload();
     }
 
     handleAction(name) {

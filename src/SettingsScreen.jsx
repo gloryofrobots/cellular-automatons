@@ -114,7 +114,7 @@ class SettingsScreen extends React.Component {
     handleChangeRule(event) {
         this.setState({
             rule: event.target.value,
-            settings: this.updatedSettings({"params": event.target.value})
+            settings: this.cloneSettings({"params": event.target.value})
         });
         this
             .props
@@ -122,7 +122,7 @@ class SettingsScreen extends React.Component {
             .setString("params", event.target.value);
     }
 
-    updatedSettings(data) {
+    cloneSettings(data) {
         var settings = _.clone(this.state.settings);
         _.each(data, (val, key) => {
             settings[key] = val;
@@ -138,7 +138,7 @@ class SettingsScreen extends React.Component {
                 .settings
                 .setString(name, event.target.value);
             this.setState({
-                settings: this.updatedSettings({[name]: event.target.value})
+                settings: this.cloneSettings({[name]: event.target.value})
             });
         };
     }
@@ -151,7 +151,7 @@ class SettingsScreen extends React.Component {
                 .settings
                 .set(name, event.target.checked);
             this.setState({
-                settings: this.updatedSettings({[name]: event.target.checked})
+                settings: this.clonSettings({[name]: event.target.checked})
             });
         };
 

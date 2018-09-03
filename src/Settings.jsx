@@ -106,6 +106,7 @@ class Settings {
         this.load();
         this.save();
         this.updated.clear();
+        this.updated.add("*")
         this.onUpdate();
     }
 
