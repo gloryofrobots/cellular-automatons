@@ -1,0 +1,35 @@
+{
+    "name": "cellular",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@material-ui/core": "^1.5.0",
+        "@material-ui/icons": "latest",
+        "axios": "^0.17.1",
+        "react": "^16.2.0",
+        "react-dom": "^16.2.0",
+        "react-grid-layout": "^0.16.2",
+        "react-material-responsive-grid": "^1.2.1",
+        "react-redux": "^5.0.6",
+        "react-resizable-grid": "^1.0.1",
+        "react-router": "^4.2.0",
+        "react-router-dom": "^4.2.2",
+        "react-scripts": "1.0.17",
+        "react-tap-event-plugin": "^3.0.2",
+        "react-color": "latest",
+        "jquery": "latest",
+        "redux": "^3.7.2",
+        "sockjs-client": "^1.1.4",
+        "sprintf-js": "^1.1.1",
+        "underscore": "^1.8.3",
+        "file-saver": "latest",
+        "universal-cookie": "^2.1.2",
+        "color": "latest"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject"
+    }
+}

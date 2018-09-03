@@ -1,0 +1,93 @@
+body {
+    /* background: #303030; */
+    background: #111;
+    color: #fff;
+    height:100vh;
+
+}
+
+.App {
+  text-align: center;
+}
+
+.app-bar {
+  text-align: center;
+}
+
+.hide {
+  display: none !important;
+}
+
+.left-align {
+  text-align: left;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.center, .settings, .center-align {
+  text-align: center;
+}
+
+.left {
+  float: left !important;
+}
+
+.right {
+  float: right !important;
+}
+
+.widget-header {
+    margin-top:20px;
+    margin-right:10px;
+    margin-left:0px;
+    margin-bottom:0px;
+    padding:0 0 0 0;
+    background: #cc0;
+}
+
+.widget-header p {
+    padding-top:10px;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+#grid-wrapper {
+    margin-top:20px;
+	/* display: flex; */
+	/* justify-content: center; /\* center horizontally *\/ */
+	/* align-items: center; /\* center vertically *\/ */
+}
+
+#grid {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.center-block {
+    width: 60%;
+    margin: auto;
+}
+
+.settings-input {
+    padding-left: 100px;
+
+}
+.spacer {
+    min-width:10px;
+}
+
+#generation-counter {
+    font-size: 12pt;
+    margin-left:10pt;
+    margin-right:10pt;
+}
+
+.footer{
+    min-height: 50pt;
+}
