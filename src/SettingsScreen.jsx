@@ -20,6 +20,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import Conf from "./Conf";
 import {IF} from "./Lang";
 
 import _ from "underscore";
@@ -125,6 +126,24 @@ class SettingsScreen extends React.Component {
         return settings;
     }
 
+    handleChangeNumber(name, minValue, maxValue) {
+        return (event) => {
+            var val = event.target.value;
+            var val = parseInt(val, 10);
+            if (val > maxValue) {
+                val = maxValue;
+            } else if(val < minValue) {
+                val = minValue;
+            }
+            this
+                .props
+                .settings
+                .set(name, val);
+            this.setState({
+                settings: this.cloneSettings({[name]: val})
+            });
+        };
+    }
     handleChange(name) {
         return (event) => {
             this
@@ -179,12 +198,12 @@ class SettingsScreen extends React.Component {
             RuleSelect = (
                 <FormControl style={styles.ruleSelectForm}>
                     <InputLabel shrink>
-                        Rule
+                        Preset
                     </InputLabel>
                     <Select value={this.state.rule} onChange={this.handleChangeRule}>
                         {_.map(this.state.rules, (rule) => {
                             return (
-                                <MenuItem key={rule.rule} value={rule.rule}>{rule.name}</MenuItem>
+                                <MenuItem key={rule.rule} value={rule.rule}>{`${rule.rule} (${rule.name})`}</MenuItem>
                             );
                         })
 }
@@ -227,13 +246,13 @@ class SettingsScreen extends React.Component {
                                 <MenuItem value={"bb"}>Brians Brain</MenuItem>
                             </Select>
                         </FormControl>
-                        {this.renderRules()}
                         <TextField
-                            label="Edit rule"
+                            label="Params"
                             value={this.state.settings.params}
                             onChange={this.handleChange("params")}
                             margin="normal"
                             style={styles.ruleEdit}/>
+                        {this.renderRules()}
                     </Grid>
 
                     <Grid
@@ -272,35 +291,35 @@ class SettingsScreen extends React.Component {
                             <TextField
                                 label="Cell side"
                                 value={this.state.settings.cellSize}
-                                onChange={this.handleChange("cellSize")}
+                                onChange={this.handleChangeNumber("cellSize", 0, Conf.maxCellSize)}
                                 margin="normal"
                                 type="number"
                                 style={styles.cellSide}/>
                             <TextField
                                 label="Cell margin"
                                 value={this.state.settings.cellMargin}
-                                onChange={this.handleChange("cellMargin")}
+                                onChange={this.handleChangeNumber("cellMargin", 0, Conf.maxCellSize)}
                                 margin="normal"
                                 type="number"
                                 style={styles.cellSide}/>
                             <TextField
                                 label="Cols"
                                 value={this.state.settings.gridWidth}
-                                onChange={this.handleChange("gridWidth")}
+                                onChange={this.handleChangeNumber("gridWidth",0, Conf.maxGridSide)}
                                 margin="normal"
                                 type="number"
                                 style={styles.defaultInput}/>
                             <TextField
                                 label="Rows"
                                 value={this.state.settings.gridHeight}
-                                onChange={this.handleChange("gridHeight")}
+                                onChange={this.handleChangeNumber("gridHeight", 0, Conf.maxGridSide)}
                                 margin="normal"
                                 type="number"
                                 style={styles.defaultInput}/>
                             <TextField
                                 label="Animation delay (ms)"
                                 value={this.state.settings.interval}
-                                onChange={this.handleChange("interval")}
+                                onChange={this.handleChangeNumber("interval",0, Conf.maxDelay)}
                                 margin="normal"
                                 type="number"
                                 style={styles.cellSide}/>

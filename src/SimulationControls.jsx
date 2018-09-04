@@ -42,6 +42,10 @@ class SimulationControls extends React.Component {
         this.onStop();
     }
 
+    rewind() {
+        this.onRewind();
+    }
+
     onStep() {
         // this.setState({save:false});
         this

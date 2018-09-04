@@ -50,12 +50,11 @@ class Settings {
 
     onAutomatonChanged(automaton) {
         this.maxValue = automaton.getMaxValue();
-        // this.updated.clear();
+        this.updated.clear();
         this._onUpdate();
     } 
 
     getMaxValue() {
-        return 1;
         return this.maxValue;
     }
 

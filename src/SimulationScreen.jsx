@@ -167,26 +167,19 @@ class SimulationScreen extends React.Component {
         this.notify("Saved", 700)
     }
 
-    componentDidUpdate(prevProps) {
-        console.log("SIM DID UPDATE", prevProps, this.props);
-        if (_.isEqual(prevProps, this.props)) {
-            return;
-        }
-
-        console.log("MACKING NEW GAME");
-        this.newGame();
-    }
-
     componentDidMount() {
         console.log("SIM MOUNT", this.props);
-        this.newGame();
-        this.mounted = true;
+        this.createSimulation();
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        // remaking automaton in some cases;
+        // componentDidUpdate not used here because of props === newProps situation
+        // and because of the need to update automaton with settings new static methods are not usefull
         if (this._shouldComponentUpdate(nextProps, nextState) === true) {
-            this.newGame();
+            this.createSimulation();
         }
+        // block canvas from rerendering
         return false;
     }
 
@@ -214,11 +207,12 @@ class SimulationScreen extends React.Component {
         }
 
         console.log("SHOULD", updated);
-        if (updated.length !== 1) {
+        if (updated.length === 0) {
+            return false;
+        } else if (updated.length > 1) {
             console.log("UPDATE REQUIRED");
             return true;
-        }
-        if (_.contains(updated, "palette")) {
+        } else if (_.contains(updated, "palette")) {
             this
                 .automaton
                 .setPalette(settings.palette);
@@ -235,8 +229,12 @@ class SimulationScreen extends React.Component {
                     .setParams(settings.params);
             } catch (e) {
                 this.notify("Invalid params");
-                return true;
             }
+
+            this
+                .controls
+                .current
+                .rewind();
             return false;
         } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue") || _.contains(updated, "activeTab")) {
             return false;
@@ -307,7 +305,7 @@ class SimulationScreen extends React.Component {
         }
     }
 
-    newGame() {
+    createSimulation() {
         var settings = this
             .props
             .settings
@@ -319,19 +317,19 @@ class SimulationScreen extends React.Component {
             return;
         }
 
-        var newGame;
+        var automaton;
         try {
             var canvas = document.getElementById("grid");
             canvas.addEventListener('click', (ev) => this.onCanvasClick(canvas, ev), false);
 
             var counter = $("#generation-counter");
-            const onRender = (automaton) => {
+            const onRender = () => {
                 // counter.html(" GENERATION " + this.automaton.generation + "");
-                counter.html("Generation [ " + newGame.generation + " ]");
+                counter.html("Generation [ " + automaton.generation + " ]");
             };
             var render = new Renderer(canvas, settings, onRender);
 
-            newGame = new automatonType(render, settings.grid, settings.params, settings.gridWidth, settings.gridHeight, onRender);
+            automaton = new automatonType(render, settings.grid, settings.params, settings.gridWidth, settings.gridHeight, onRender);
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {
@@ -359,11 +357,11 @@ class SimulationScreen extends React.Component {
             this.automaton = undefined;
         }
         console.log("!!!!!!!!!!!!!!!!!");
-        this.automaton = newGame;
-        // this
-        //     .props
-        //     .settings
-        //     .onAutomatonChanged(this.automaton);
+        this.automaton = automaton;
+        this
+            .props
+            .settings
+            .onAutomatonChanged(this.automaton);
         this
             .automaton
             .render();
