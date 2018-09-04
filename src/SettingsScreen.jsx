@@ -151,7 +151,7 @@ class SettingsScreen extends React.Component {
                 .settings
                 .set(name, event.target.checked);
             this.setState({
-                settings: this.clonSettings({[name]: event.target.checked})
+                settings: this.cloneSettings({[name]: event.target.checked})
             });
         };
 

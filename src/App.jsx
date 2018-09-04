@@ -101,6 +101,7 @@ class App extends React.Component {
                 </Grid>
                 <Router>
                     <main>
+                        <Feedback message="" ref={this.feedback}/>
                         <SettingsScreen
                             settings={this.settings}
                             updatedSettings={this.state.updatedSettings}
@@ -112,7 +113,6 @@ class App extends React.Component {
                             settings={this.settings}
                             updatedSettings={this.state.updatedSettings}/>
 
-                        <Feedback message="" ref={this.feedback}/>
                         <Route
                             path="/"
                             render={(props) => (

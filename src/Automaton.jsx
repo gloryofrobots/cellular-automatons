@@ -273,7 +273,7 @@ class GameOfLife extends Automaton {
     validate() {
         if (this.params.length != 2) {
             console.error("INVALID params", this.params);
-            throw new Error("Invalid params");
+            throw new Errors.InvalidParamsError("Invalid params");
         }
     }
 
@@ -309,9 +309,6 @@ class GameOfLife extends Automaton {
     }
 }
 
-// class Seeds extends GameOfLife {     judge(cell, count) {         if(cell ===
-// 1) {             return 0;         }         if (count === 2) {
-// return 1;         }         return 0;     } }
 
 class BriansBrain extends GameOfLife {
     genCell() {

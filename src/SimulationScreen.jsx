@@ -89,8 +89,16 @@ class SimulationScreen extends React.Component {
             .rewind();
     }
 
+    isRunning(){
+        return !_.isUndefined(this.automaton) && this.automaton.isRunning();
+    }
+
     onRandomize() {
-        if (this.automaton.isRunning()) {
+        if(_.isUndefined(this.automaton)){
+            this.notify("Invalid automaton state");
+            return;
+        }
+        if (this.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
             this.notify("STOP SIMULATION FIRST");
             return;
@@ -101,7 +109,11 @@ class SimulationScreen extends React.Component {
     }
 
     onClear() {
-        if (this.automaton.isRunning()) {
+        if(_.isUndefined(this.automaton)){
+            this.notify("Invalid automaton state");
+            return;
+        }
+        if (this.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
             this.notify("STOP SIMULATION FIRST");
             return;
@@ -112,7 +124,11 @@ class SimulationScreen extends React.Component {
     }
 
     onRefresh() {
-        if (this.automaton.isRunning()) {
+        if(_.isUndefined(this.automaton)){
+            this.notify("Invalid automaton state");
+            return;
+        }
+        if (this.isRunning()) {
             console.error("GAME IS RUNING", this.automaton);
             this.notify("STOP SIMULATION FIRST");
             return;
@@ -140,6 +156,10 @@ class SimulationScreen extends React.Component {
     }
 
     onSave() {
+        if(_.isUndefined(this.automaton)){
+            this.notify("Invalid automaton state");
+            return;
+        }
         this
             .props
             .settings
@@ -155,9 +175,6 @@ class SimulationScreen extends React.Component {
 
         console.log("MACKING NEW GAME");
         this.newGame();
-        this
-            .automaton
-            .render();
     }
 
     componentDidMount() {
@@ -171,7 +188,7 @@ class SimulationScreen extends React.Component {
             .toObject();
         var updated = nextProps.updatedSettings;
 
-        if (_.isUndefined(settings) || _.isUndefined(updated)) {
+        if (_.isUndefined(settings) || _.isUndefined(updated) || _.isUndefined(this.automaton)) {
             console.log("UPDATE REQUIRED");
             return true;
         }
@@ -200,9 +217,14 @@ class SimulationScreen extends React.Component {
                 .setRenderSettings(settings);
             return false;
         } else if (_.contains(updated, "params")) {
-            this
-                .automaton
-                .setParams(settings.params);
+            try{
+                this
+                    .automaton
+                    .setParams(settings.params);
+            } catch (e) {
+                this.notify("Invalid params");
+                return true;
+            }
             return false;
         } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue") || _.contains(updated, "activeTab")) {
             return false;
@@ -213,6 +235,10 @@ class SimulationScreen extends React.Component {
     }
     
     onCanvasClick(canvas, ev) {
+        if(!this.automaton) {
+            console.log("Click on broken sim");
+            return;
+        }
         if (this.automaton.generation !== 0) {
             this.notify("Only first generation can be edited. Rewind simulation before editing board");
             return;
@@ -307,6 +333,9 @@ class SimulationScreen extends React.Component {
                 return;
             } else {
                 console.error(e);
+                alert("Invalid settings, everything will be reverted to default state");
+                this.props.settings.setDefaultValues();
+                return;
             }
         }
 
