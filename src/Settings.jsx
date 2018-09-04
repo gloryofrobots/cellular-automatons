@@ -284,7 +284,7 @@ class Settings {
     }
 
     saveAutomatonGrid(automaton){
-        this.settings["grid"] = automaton.grid;
+        this.settings["grid"] = automaton.cells.cells;
         //saving directly only one value to speed things up
         var data = JSON.stringify(this.settings.grid);
         localStorage.setItem("grid", data);

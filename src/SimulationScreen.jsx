@@ -11,6 +11,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
 
 import SimulationControls from "./SimulationControls";
+import Cells from "./Cells";
 import $ from "jquery";
 import _ from "underscore";
 
@@ -329,7 +330,15 @@ class SimulationScreen extends React.Component {
             };
             var render = new Renderer(canvas, settings, onRender);
 
-            automaton = new automatonType(render, settings.grid, settings.params, settings.gridWidth, settings.gridHeight, onRender);
+            var cells = new Cells(100*100, settings.gridWidth, settings.gridHeight);
+            if (settings.grid && settings.grid.length > 0){
+                try {
+                    cells.setCells(settings.grid);
+                } catch(e) {
+                    this.notify("Error restoring grid");
+                }
+            }
+            automaton = new automatonType(render, cells, settings.params, onRender);
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {

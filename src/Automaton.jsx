@@ -8,55 +8,33 @@ function randi(min, max) {
 }
 
 class Automaton {
-    constructor(renderer, cells, params, width, height) {
+    constructor(renderer, cells, params) {
         this.setParams(params);
         this.renderer = renderer;
-
-        this.width = width;
-        this.height = height;
-        this.size = this.width * this.height;
+        this._cells = cells;
         this._generation = 0;
+        console.log("CELLS", cells);
+    }
 
-        if (!_.isArray(cells) || cells.length === 0) {
-            // console.log("CLEAR");
-            this._clear();
-        } else {
-            if (cells.length !== this.size) {
-                // console.error("Trying to restore invalid grid", cells);
-                this._clear();
-                return;
-            }
-            this._restore(cells);
-        }
-        console.log("CELLS", this.cells, cells);
+    get cells() {
+        return this._cells;
     }
 
     setCells(cells) {
-        if (cells.length !== this.size) {
-            // console.error("Trying to restore invalid grid", cells);
-            throw new Errors.InvalidGridError();
-        }
-
-        this._restore(cells);
+        this.cells.setCells(cells);
+        this._generation = 0;
         this.render();
-    }
-
-    get grid() {
-        return this.initialCells;
     }
 
     setCell(x, y, value) {
-        var index = this.index(x, y);
-        if (index < 0) {
-            return false;
-        }
         if (!this.acceptValue(value)) {
             return false;
         }
-        this.cells[index] = value;
-        this.initialCells[index] = value;
-        this.render();
-        return true;
+        var result = this.cells.set(x, y, value);
+        if (result === true) {
+            this.render();
+        }
+        return result;
     }
 
     acceptValue(val) {
@@ -86,32 +64,14 @@ class Automaton {
         this.render();
     }
 
-    _clear() {
-        this._generation = 0;
-        this.cells = new Array(this.size);
-        this.cells = this
-            .cells
-            .fill(0, 0, this.size);
-        this.initialCells = this
-            .cells
-            .slice();
-    }
-
-    _restore(cells) {
-        this._generation = 0;
-        this.cells = cells.slice()
-        this.initialCells = this
-            .cells
-            .slice();
-    }
-
     clear() {
         if (this.isRunning()) {
             console.error("Still running");
             return;
         }
 
-        this._clear();
+        this._generation = 0;
+        this.cells.clear();
         this.render();
     }
 
@@ -121,15 +81,7 @@ class Automaton {
             return;
         }
         this._generation = 0;
-        this.cells = this
-            .cells
-            .map((val, index, arr) => {
-                return this.genCell();
-            });
-
-        this.initialCells = this
-            .cells
-            .slice();
+        this.cells.randomize(() => this.genCell());
         this.render();
     }
 
@@ -167,26 +119,8 @@ class Automaton {
 
     rewind() {
         this._generation = 0;
-        this.cells = this
-            .initialCells
-            .slice();
+        this.cells.rewind();
         this.render();
-    }
-
-    index(x, y) {
-        if (x < 0 || x >= this.width || y < 0 || y > this.height) {
-            return -1;
-        }
-        return y * this.width + x;
-    }
-
-    get(x, y) {
-        var index = this.index(x, y);
-        if (index === -1) {
-            return undefined;
-        }
-
-        return this.cells[index];
     }
 
     judge(cell, count) {
@@ -197,10 +131,9 @@ class Automaton {
         this
             .renderer
             .begin();
-        for (var x = 0; x < this.width; x++) {
-            for (var y = 0; y < this.height; y++) {
-                var index = this.index(x, y);
-                var cell = this.cells[index];
+        for (var x = 0; x < this.cells.width; x++) {
+            for (var y = 0; y < this.cells.height; y++) {
+                var cell = this.cells.get(x, y);
                 this
                     .renderer
                     .drawCell(x, y, cell);
@@ -212,17 +145,16 @@ class Automaton {
     }
 
     update() {
-        var newCells = new Array(this.size);
-        for (var x = 0; x < this.width; x++) {
-            for (var y = 0; y < this.height; y++) {
-                var index = this.index(x, y);
-                var cell = this.cells[index];
+        this.cells.flip();
+        for (var x = 0; x < this.cells.width; x++) {
+            for (var y = 0; y < this.cells.height; y++) {
+                var index = this.cells.index(x, y);
+                var cell = this.cells.oldCells[index];
                 var newCell = this.calculate(cell, index, x, y);
-                newCells[index] = newCell;
+                this.cells.cells[index] = newCell;
             }
         }
         this._generation += 1;
-        this.cells = newCells;
         this.render();
     }
 
@@ -259,7 +191,7 @@ class Automaton {
 
 class GameOfLife extends Automaton {
     countNeighbors(x, y) {
-        var cell = this.get(x, y);
+        var cell = this.cells.get(x, y);
         if (cell === 1) {
             return 1;
         }
