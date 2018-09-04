@@ -137,6 +137,7 @@ class Automaton {
                 this
                     .renderer
                     .drawCell(x, y, cell);
+                // console.log("RNC", x, y, cell);
             }
         }
         this
@@ -145,6 +146,9 @@ class Automaton {
     }
 
     update() {
+        this
+            .renderer
+            .begin();
         this.cells.flip();
         for (var x = 0; x < this.cells.width; x++) {
             for (var y = 0; y < this.cells.height; y++) {
@@ -152,10 +156,17 @@ class Automaton {
                 var cell = this.cells.oldCells[index];
                 var newCell = this.calculate(cell, index, x, y);
                 this.cells.cells[index] = newCell;
+                // console.log("UNC", x, y, cell, newCell);
+                this
+                    .renderer
+                    .drawCell(x, y, newCell);
             }
         }
         this._generation += 1;
-        this.render();
+        this
+            .renderer
+            .end();
+        // this.render();
     }
 
     calculate(cell, index, x, y) {
@@ -191,7 +202,7 @@ class Automaton {
 
 class GameOfLife extends Automaton {
     countNeighbors(x, y) {
-        var cell = this.cells.get(x, y);
+        var cell = this.cells.getOld(x, y);
         if (cell === 1) {
             return 1;
         }

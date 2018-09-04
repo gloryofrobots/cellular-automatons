@@ -43,6 +43,15 @@ class Cells {
         return this.cells[index];
     }
 
+    getOld(x, y) {
+        var index = this.index(x, y);
+        if (index === -1) {
+            return undefined;
+        }
+
+        return this.oldCells[index];
+    }
+
     set(x, y, value) {
         var index = this.index(x, y);
         if (index < 0) {
@@ -75,17 +84,27 @@ class Cells {
     }
 
     rewind() {
-        for (var x = 0; x < this.width; x++) {
-            for (var y = 0; y < this.height; y++) {
-                var index = this.index(x, y);
-                this.cells[index] = this.initialCells[index];
-            }
+        this.cells = this.initialCells.slice();
+        for(var i = 0; i < this.size; i++) {
+            this.cells[i] = this.initialCells[i];
         }
+        // for (var x = 0; x < this.width; x++) {
+        //     for (var y = 0; y < this.height; y++) {
+        //         var index = this.index(x, y);
+        //         this.cells[index] = this.initialCells[index];
+        //     }
+        // }
     }
     flip() {
         var t = this.oldCells;
         this.oldCells = this.cells;
         this.cells = t;
+        // this.cells = new Array(this.size);
+
+        // this.cells = this
+        //     .cells
+        //     .fill(0, 0, this.size);
+        // console.log("Flip", this.oldCells, this.cells);
     }
 
 }
