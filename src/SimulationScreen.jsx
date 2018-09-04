@@ -180,9 +180,21 @@ class SimulationScreen extends React.Component {
     componentDidMount() {
         console.log("SIM MOUNT", this.props);
         this.newGame();
+        this.mounted = true;
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        if (this._shouldComponentUpdate(nextProps, nextState) === true) {
+            this.newGame();
+        }
+        return false;
+    }
+
+    _shouldComponentUpdate(nextProps, nextState) {
+        if(_.isUndefined(this.automaton)){
+            return true;
+        }
+
         var settings = nextProps
             .settings
             .toObject();
@@ -348,10 +360,10 @@ class SimulationScreen extends React.Component {
         }
         console.log("!!!!!!!!!!!!!!!!!");
         this.automaton = newGame;
-        this
-            .props
-            .settings
-            .onAutomatonChanged(this.automaton);
+        // this
+        //     .props
+        //     .settings
+        //     .onAutomatonChanged(this.automaton);
         this
             .automaton
             .render();

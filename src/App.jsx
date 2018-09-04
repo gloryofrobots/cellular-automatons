@@ -104,8 +104,7 @@ class App extends React.Component {
                         <Feedback message="" ref={this.feedback}/>
                         <SettingsScreen
                             settings={this.settings}
-                            updatedSettings={this.state.updatedSettings}
-                            onAction={this.onAction}/>
+                            />
                         <hr/>
                         <SimulationScreen
                             ref={this.sim}

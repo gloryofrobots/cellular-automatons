@@ -82,12 +82,6 @@ class SettingsScreen extends React.Component {
         });
     }
 
-    handleAction(name) {
-        return () => {
-            this.onActionCallback(name);
-        };
-    }
-
     handleChangeFamily(event) {
         var family = event.target.value;
         var settings = this.props.settings;
@@ -257,7 +251,6 @@ class SettingsScreen extends React.Component {
                                 <Typography>Description</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-
                                     <this.state.info/>
                             </ExpansionPanelDetails>
                         </ExpansionPanel>

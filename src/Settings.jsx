@@ -55,6 +55,7 @@ class Settings {
     } 
 
     getMaxValue() {
+        return 1;
         return this.maxValue;
     }
 
