@@ -165,24 +165,72 @@ class SimulationScreen extends React.Component {
         this.newGame();
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        var settings = nextProps
+            .settings
+            .toObject();
+        var updated = nextProps.updatedSettings;
+
+        if (_.isUndefined(settings) || _.isUndefined(updated)) {
+            console.log("UPDATE REQUIRED");
+            return true;
+        }
+
+        if (this.automaton && this.automaton.isRunning()) {
+            //emulate stop
+            this
+                .controls
+                .current
+                .stop();
+        }
+
+        console.log("SHOULD", updated);
+        if (updated.length !== 1) {
+            console.log("UPDATE REQUIRED");
+            return true;
+        }
+        if (_.contains(updated, "palette")) {
+            this
+                .automaton
+                .setPalette(settings.palette);
+            return false;
+        } else if (_.contains(updated, "cellMargin") || _.contains(updated, "cellSize") || _.contains(updated, "showValues")) {
+            this
+                .automaton
+                .setRenderSettings(settings);
+            return false;
+        } else if (_.contains(updated, "params")) {
+            this
+                .automaton
+                .setParams(settings.params);
+            return false;
+        } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue") || _.contains(updated, "activeTab")) {
+            return false;
+        } else {
+            console.log("UPDATE REQUIRED");
+            return true;
+        }
+    }
+    
     onCanvasClick(canvas, ev) {
         if (this.automaton.generation !== 0) {
             this.notify("Only first generation can be edited. Rewind simulation before editing board");
             return;
         }
+        // console.log("CLICK");
         var rect = canvas.getBoundingClientRect();
         var settings = this.props.settings;
         var cellSize = settings.get("cellSize")
-        var cellSide = cellSize + settings.get("cellMargin") - 1;
+        var cellSide = cellSize + settings.get("cellMargin");
         var x = ev.clientX - rect.left;
         var y = ev.clientY - rect.top;
 
         var cellX = Math.floor(x / cellSide);
-        var minX = Math.max(cellX - 3, 0);
-        var maxX = Math.min(cellX + 3, settings.get("gridWidth"));
+        var minX = Math.max(cellX - 10, 0);
+        var maxX = Math.min(cellX + 10, settings.get("gridWidth"));
         var cellY = Math.floor(y / cellSide);
-        var minY = Math.max(cellY - 3, 0);
-        var maxY = Math.min(cellY + 3, settings.get("gridHeight"));
+        var minY = Math.max(cellY - 10, 0);
+        var maxY = Math.min(cellY + 10, settings.get("gridHeight"));
 
         for (var _x = minX; _x < maxX; _x++) {
             for (var _y = minY; _y < maxY; _y++) {
@@ -203,7 +251,6 @@ class SimulationScreen extends React.Component {
         }
         // console.log("NOT Found XY");
 
-        this.props.notify("Click");
     }
 
     notify(msg, duration) {
@@ -281,49 +328,6 @@ class SimulationScreen extends React.Component {
             .render();
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        var settings = nextProps
-            .settings
-            .toObject();
-        var updated = nextProps.updatedSettings;
-
-        if (_.isUndefined(settings) || _.isUndefined(updated)) {
-            return true;
-        }
-
-        if (this.automaton && this.automaton.isRunning()) {
-            //emulate stop
-            this
-                .controls
-                .current
-                .stop();
-        }
-
-        console.log("SHOULD", updated);
-        if (updated.length !== 1) {
-            return true;
-        }
-        if (_.contains(updated, "palette")) {
-            this
-                .automaton
-                .setPalette(settings.palette);
-            return false;
-        } else if (_.contains(updated, "cellMargin") || _.contains(updated, "cellSize") || _.contains(updated, "showValues")) {
-            this
-                .automaton
-                .setRenderSettings(settings);
-            return false;
-        } else if (_.contains(updated, "params")) {
-            this
-                .automaton
-                .setParams(settings.params);
-            return false;
-        } else if (_.contains(updated, "interval") || _.contains(updated, "currentValue") || _.contains(updated, "activeTab")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     render() {
         console.log("SIM RENDER", this.props.settings);
