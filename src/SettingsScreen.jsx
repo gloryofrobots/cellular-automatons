@@ -103,12 +103,9 @@ class SettingsScreen extends React.Component {
 
         settings.setString("family", family);
         settings.setMany({
-            name: settings.getDefaultName(),
             grid: [],
             currentValue: 0
         });
-        // console.log("DEF NAMe",settings.getDefaultName()) clearing grid to avoid
-        // confusion between families
         this.setState({
             rules: rules,
             rule: rule,

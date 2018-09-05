@@ -14,7 +14,7 @@ var DEFAULT = {
     currentValue:0,
     showValues:false,
     activeTab:0,
-    name:"gl_23_3",
+    name:"new-automaton",
     palette: [
         "#cccccc", "#669999", "#9c27b0", "#673ab7",
         "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4",
