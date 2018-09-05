@@ -77,6 +77,17 @@ class SettingsScreen extends React.Component {
         _.bindAll(this, "onTabChanged", "onSetDefaults", "onToggleEditor", "handleChangeRule", "handleChangeFamily");
     }
 
+    static getDerivedStateFromProps(props, state) {
+        var settings = props.settings;
+        var family = settings.get("family");
+        return {
+            settings: settings.toObject(),
+            rules: settings.getRules(family),
+            rule: settings.getRule(family),
+            info: settings.getInfo(family)
+        };
+    }
+
     onToggleEditor() {
         this.setState({
             editEnabled: !this.state.editEnabled
@@ -105,7 +116,6 @@ class SettingsScreen extends React.Component {
             settings: settings.toObject()
         });
     }
-
     handleChangeRule(event) {
         this.setState({
             rule: event.target.value,

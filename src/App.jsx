@@ -99,7 +99,9 @@ class App extends React.Component {
                     style={{
                     background: "#333333"
                 }}>
-                    <AppMenu settings={this.settings}/>
+                    <AppMenu 
+                        settings={this.settings}
+                        cells={this.cells}/>
                 </Grid>
                 <Router>
                     <main>

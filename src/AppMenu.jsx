@@ -40,7 +40,7 @@ class AppMenu extends React.Component {
     };
 
     exportSettings() {
-        var data = this.props.settings.serialize();
+        var data = this.props.settings.serialize(this.props.cells);
         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
         var filename = `${this.props.settings.get("name")}.json`;
         FileSaver.saveAs(blob, filename);

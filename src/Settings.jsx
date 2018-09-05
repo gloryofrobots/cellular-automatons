@@ -75,7 +75,8 @@ class Settings {
         // return _.toArray(this.updated.values());
     }
 
-    serialize() {
+    serialize(cells) {
+        this.settings["grid"] = cells.cells; 
         return JSON.stringify(this.settings);
     }
 
@@ -95,7 +96,9 @@ class Settings {
 
 
         this.settings = obj;
+        console.log("UNSERIALIZE", this.settings);
         this.updated.clear();
+        this.updated.add("*")
         this.save();
         this.onUpdate();
         return true;
