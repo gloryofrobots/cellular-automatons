@@ -44,7 +44,11 @@ class Cells {
         return this.cells[index];
     }
 
-    getOld(x, y) {
+    getOld(x, y, boundX, boundY) {
+        if(x >= boundX || y >= boundY) {
+            return undefined;
+        }
+
         var index = this.index(x, y);
         if (index === -1) {
             return undefined;

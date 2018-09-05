@@ -230,7 +230,7 @@ class SimulationScreen extends React.Component {
                 .controls
                 .current
                 .rewind();
-            // this.automaton.cells.resize(settings.gridWidth, settings.gridHeight);
+            this.automaton.setSettings(settings);
             this
                 .automaton
                 .setRenderSettings(settings);
@@ -352,7 +352,7 @@ class SimulationScreen extends React.Component {
                     this.notify("Error restoring grid");
                 }
             }
-            automaton = new automatonType(render, this.props.cells, settings.params, onRender);
+            automaton = new automatonType(render, this.props.cells, settings);
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {

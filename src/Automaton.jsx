@@ -8,12 +8,20 @@ function randi(min, max) {
 }
 
 class Automaton {
-    constructor(renderer, cells, params) {
-        this.setParams(params);
+    constructor(renderer, cells, settings) {
+        this.setSettings(settings);
         this.renderer = renderer;
         this._cells = cells;
         this._generation = 0;
         console.log("CELLS", cells);
+    }
+
+    setSettings(settings) {
+        console.log("SET SETT", settings)
+        var params = settings.params;
+        this.setParams(params);
+        this.gridWidth = settings.gridWidth;
+        this.gridHeight = settings.gridHeight;
     }
 
     get cells() {
@@ -80,8 +88,14 @@ class Automaton {
             console.error("Still running");
             return;
         }
+
         this._generation = 0;
-        this.cells.randomize(() => this.genCell());
+        this.cells.randomize(
+            () => this.genCell(),
+            this.gridWidth,
+            this.gridHeight
+        );
+
         this.render();
     }
 
@@ -128,11 +142,15 @@ class Automaton {
     }
 
     render() {
+        var width = this.gridWidth;
+        var height = this.gridHeight;
+        // var width = this.cells.width;
+        // var height = this.cells.height;
         this
             .renderer
             .begin();
-        for (var x = 0; x < this.cells.width; x++) {
-            for (var y = 0; y < this.cells.height; y++) {
+        for (var x = 0; x < width; x++) {
+            for (var y = 0; y < height; y++) {
                 var cell = this.cells.get(x, y);
                 this
                     .renderer
@@ -146,14 +164,18 @@ class Automaton {
     }
 
     update() {
+        // var width = this.cells.width;
+        // var height = this.cells.height;
+        var width = this.gridWidth;
+        var height = this.gridHeight;
         this
             .renderer
             .begin();
 
         this.cells.flip();
 
-        for (var x = 0; x < this.cells.width; x++) {
-            for (var y = 0; y < this.cells.height; y++) {
+        for (var x = 0; x < width; x++) {
+            for (var y = 0; y < height; y++) {
                 var index = this.cells.index(x, y);
                 var cell = this.cells.oldCells[index];
                 var newCell = this.calculate(cell, index, x, y);
@@ -205,7 +227,7 @@ class Automaton {
 
 class GameOfLife extends Automaton {
     countNeighbors(x, y) {
-        var cell = this.cells.getOld(x, y);
+        var cell = this.cells.getOld(x, y, this.gridWidth, this.gridHeight);
         if (cell === 1) {
             return 1;
         }
