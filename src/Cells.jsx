@@ -32,16 +32,14 @@ class Cells {
         this.width = width;
         this.height = height;
         this.cells = cells.slice()
-        this.initialCells = this
-            .cells
-            .slice();
+        this.store();
         // if(width === this.width && height === this.height) {
         // } else {
         //     this.resize(cells, width, height);
         // }
     }
 
-    resize(width, height) {
+    resize2(width, height) {
         this.flip();
         this.nullify();
 
@@ -62,11 +60,13 @@ class Cells {
         this.height = height;
         // this.oldCells = this.cells.slice();
     }
-    resize2(width, height) {
-        var oldCells = this.cells.slice();
+    resize(width, height) {
+        var oldCells = this.cells
         var oldWidth = this.width;
         var oldHeight = this.height;
-        var cells = this.cells.fill(0, 0, this.size);
+        var cells = this.oldCells;
+        cells.fill(0, 0, this.size);
+
         console.log("RESIZE", [oldWidth, oldHeight], [width, height], oldCells,cells  );
         for (var y = 0; y < height; y++) {
             for (var x = 0; x < width; x++) {
@@ -84,19 +84,15 @@ class Cells {
 
         this.width = width;
         this.height = height;
-        this.cells = cells.slice();
-        this.oldCells = this.cells.slice();
-        this.initialCells = this.cells.slice();
-
-        console.log("RESIZE OVER", this.cells); 
+        this.cells = cells;
+        this.store();
+        // console.log("RESIZE OVER", this.cells); 
         // this.oldCells = this.cells.slice();
     }
 
     clear() {
-        this.cells = this
-            .cells
-            .fill(0, 0, this.size);
-
+        this.cells.fill(0, 0, this.size);
+        this.oldCells.fill(0, 0, this.size);
         this.store();
     }
 
@@ -182,12 +178,6 @@ class Cells {
         var t = this.oldCells;
         this.oldCells = this.cells;
         this.cells = t;
-        // this.cells = new Array(this.size);
-
-        // this.cells = this
-        //     .cells
-        //     .fill(0, 0, this.size);
-        // console.log("Flip", this.oldCells, this.cells);
     }
 
 }
