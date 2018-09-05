@@ -164,12 +164,19 @@ class SimulationScreen extends React.Component {
         this
             .props
             .settings
-            .saveAutomatonGrid(this.automaton);
+            .saveAutomatonGrid(this.automaton.cells);
         this.notify("Saved", 700)
+    }
+
+    componentDidUpdate(){
+        var canvas = document.getElementById("grid");
+        canvas.addEventListener('click', (ev) => this.onCanvasClick(canvas, ev), false);
     }
 
     componentDidMount() {
         console.log("SIM MOUNT", this.props);
+        var canvas = document.getElementById("grid");
+        canvas.addEventListener('click', (ev) => this.onCanvasClick(canvas, ev), false);
         this.createSimulation();
     }
 
@@ -218,6 +225,16 @@ class SimulationScreen extends React.Component {
                 .automaton
                 .setPalette(settings.palette);
             return false;
+        } else if (_.contains(updated, "gridWidth") || _.contains(updated, "gridHeight") ){
+            this
+                .controls
+                .current
+                .rewind();
+            this.automaton.cells.resize(settings.gridWidth, settings.gridHeight);
+            this
+                .automaton
+                .setRenderSettings(settings);
+            console.log("RESIZE");
         } else if (_.contains(updated, "cellMargin") || _.contains(updated, "cellSize") || _.contains(updated, "showValues")) {
             this
                 .automaton
@@ -321,8 +338,6 @@ class SimulationScreen extends React.Component {
         var automaton;
         try {
             var canvas = document.getElementById("grid");
-            canvas.addEventListener('click', (ev) => this.onCanvasClick(canvas, ev), false);
-
             var counter = $("#generation-counter");
             const onRender = () => {
                 // counter.html(" GENERATION " + this.automaton.generation + "");
@@ -330,15 +345,14 @@ class SimulationScreen extends React.Component {
             };
             var render = new Renderer(canvas, settings, onRender);
 
-            var cells = new Cells(100*100, settings.gridWidth, settings.gridHeight);
             if (settings.grid && settings.grid.length > 0){
                 try {
-                    cells.setCells(settings.grid);
+                    this.props.cells.setCells(settings.grid, settings.gridWidth, settings.gridHeight);
                 } catch(e) {
                     this.notify("Error restoring grid");
                 }
             }
-            automaton = new automatonType(render, cells, settings.params, onRender);
+            automaton = new automatonType(render, this.props.cells, settings.params, onRender);
 
         } catch (e) {
             if (e instanceof Errors.InvalidParamsError) {

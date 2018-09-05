@@ -149,20 +149,23 @@ class Automaton {
         this
             .renderer
             .begin();
+
         this.cells.flip();
+
         for (var x = 0; x < this.cells.width; x++) {
             for (var y = 0; y < this.cells.height; y++) {
                 var index = this.cells.index(x, y);
                 var cell = this.cells.oldCells[index];
                 var newCell = this.calculate(cell, index, x, y);
                 this.cells.cells[index] = newCell;
-                // console.log("UNC", x, y, cell, newCell);
                 this
                     .renderer
                     .drawCell(x, y, newCell);
             }
         }
+
         this._generation += 1;
+
         this
             .renderer
             .end();

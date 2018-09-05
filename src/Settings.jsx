@@ -283,8 +283,8 @@ class Settings {
         );
     }
 
-    saveAutomatonGrid(automaton){
-        this.settings["grid"] = automaton.cells.cells;
+    saveAutomatonGrid(cells){
+        this.settings["grid"] = cells.cells; 
         //saving directly only one value to speed things up
         var data = JSON.stringify(this.settings.grid);
         localStorage.setItem("grid", data);

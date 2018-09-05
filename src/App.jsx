@@ -24,6 +24,7 @@ import SettingsScreen from "./SettingsScreen";
 import SimulationScreen from './SimulationScreen';
 import AppMenu from "./AppMenu";
 import Feedback from "./Feedback"
+import Cells from "./Cells";
 
 import {
     Route, withRouter,
@@ -45,6 +46,7 @@ class App extends React.Component {
         this.settings = new Settings(this.onChangeSettings);
         this.sim = React.createRef();
         this.feedback = React.createRef();
+        this.cells = new Cells(10*10, this.settings.get("gridWidth"), this.settings.get("gridHeight"));
 
         this.state = {
             currentValue: 0,
@@ -109,6 +111,7 @@ class App extends React.Component {
                         <SimulationScreen
                             ref={this.sim}
                             notify={this.notify}
+                            cells={this.cells}
                             settings={this.settings}
                             updatedSettings={this.state.updatedSettings}/>
 
