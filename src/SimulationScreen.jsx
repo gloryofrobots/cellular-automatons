@@ -230,7 +230,7 @@ class SimulationScreen extends React.Component {
                 .controls
                 .current
                 .rewind();
-            this.automaton.cells.resize(settings.gridWidth, settings.gridHeight);
+            // this.automaton.cells.resize(settings.gridWidth, settings.gridHeight);
             this
                 .automaton
                 .setRenderSettings(settings);
@@ -347,7 +347,7 @@ class SimulationScreen extends React.Component {
 
             if (settings.grid && settings.grid.length > 0){
                 try {
-                    this.props.cells.setCells(settings.grid, settings.gridWidth, settings.gridHeight);
+                    this.props.cells.setCells(settings.grid);
                 } catch(e) {
                     this.notify("Error restoring grid");
                 }

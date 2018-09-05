@@ -46,7 +46,7 @@ class App extends React.Component {
         this.settings = new Settings(this.onChangeSettings);
         this.sim = React.createRef();
         this.feedback = React.createRef();
-        this.cells = new Cells(10*10, this.settings.get("gridWidth"), this.settings.get("gridHeight"));
+        this.cells = new Cells(1000, 1000) 
 
         this.state = {
             currentValue: 0,

@@ -119,7 +119,7 @@ class Automaton {
 
     rewind() {
         this._generation = 0;
-        this.cells.rewind();
+        this.cells.restore();
         this.render();
     }
 
